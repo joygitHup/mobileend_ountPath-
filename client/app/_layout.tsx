@@ -22,7 +22,10 @@ export default function RootLayout() {
           headerShown: false
         }}
       >
-        <Stack.Screen name="index" options={{ title: "" }} />
+        <Stack.Screen name="(tabs)" />
+        <Stack.Screen name="route-detail" />
+        <Stack.Screen name="checklist" />
+        <Stack.Screen name="guard" />
       </Stack>
       <Toast />
     </Provider>

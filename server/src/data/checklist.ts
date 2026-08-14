@@ -1,0 +1,62 @@
+export interface ChecklistItem {
+  id: string;
+  name: string;
+  description: string;
+  category: 'essential' | 'recommended' | 'optional';
+  weight_grams: number;
+  checked: boolean;
+}
+
+export interface ChecklistData {
+  route_id: string;
+  route_name: string;
+  departure_time: string;
+  weather_summary: string;
+  items: ChecklistItem[];
+  total_weight_suggestion_grams: number;
+}
+
+const baseItems: ChecklistItem[] = [
+  { id: 'c1', name: '登山鞋', description: '防滑防水高帮登山鞋，保护脚踝', category: 'essential', weight_grams: 800, checked: false },
+  { id: 'c2', name: '登山杖', description: '减轻膝盖压力，保持平衡', category: 'essential', weight_grams: 400, checked: false },
+  { id: 'c3', name: '头灯', description: '夜间或暗处照明，必备安全装备', category: 'essential', weight_grams: 80, checked: false },
+  { id: 'c4', name: '救生毯', description: '紧急保温，防止失温', category: 'essential', weight_grams: 50, checked: false },
+  { id: 'c5', name: '急救包', description: '创可贴、纱布、碘伏、止痛药', category: 'essential', weight_grams: 200, checked: false },
+  { id: 'c6', name: '饮用水', description: '每人至少2L，高温天气加倍', category: 'essential', weight_grams: 2000, checked: false },
+  { id: 'c7', name: '高热量食物', description: '能量棒、坚果、巧克力', category: 'essential', weight_grams: 300, checked: false },
+  { id: 'c8', name: '手机+充电宝', description: '确保电量充足，下载离线地图', category: 'essential', weight_grams: 300, checked: false },
+  { id: 'c9', name: '雨衣/冲锋衣', description: '山区天气多变，防雨必备', category: 'essential', weight_grams: 350, checked: false },
+  { id: 'c10', name: '防晒霜', description: '高海拔紫外线强，SPF50+', category: 'recommended', weight_grams: 80, checked: false },
+  { id: 'c11', name: '遮阳帽', description: '防晒兼防树枝刮伤', category: 'recommended', weight_grams: 60, checked: false },
+  { id: 'c12', name: '速干衣裤', description: '排汗透气，避免棉质衣物', category: 'recommended', weight_grams: 250, checked: false },
+  { id: 'c13', name: '护膝', description: '下坡保护膝盖', category: 'recommended', weight_grams: 150, checked: false },
+  { id: 'c14', name: '防蚊喷雾', description: '夏季山林蚊虫多', category: 'recommended', weight_grams: 100, checked: false },
+  { id: 'c15', name: '垃圾袋', description: '带走自己的垃圾，保护山野', category: 'recommended', weight_grams: 30, checked: false },
+  { id: 'c16', name: '望远镜', description: '观景和探路', category: 'optional', weight_grams: 200, checked: false },
+  { id: 'c17', name: '相机', description: '记录沿途风景', category: 'optional', weight_grams: 400, checked: false },
+  { id: 'c18', name: '吊床', description: '休息时使用', category: 'optional', weight_grams: 300, checked: false },
+];
+
+const hardExtraItems: ChecklistItem[] = [
+  { id: 'c19', name: '帐篷', description: '过夜必备，选择轻量化款', category: 'essential', weight_grams: 1800, checked: false },
+  { id: 'c20', name: '睡袋', description: '根据夜间最低温度选择', category: 'essential', weight_grams: 1000, checked: false },
+  { id: 'c21', name: '防潮垫', description: '隔绝地面寒湿', category: 'essential', weight_grams: 400, checked: false },
+  { id: 'c22', name: '炉头+气罐', description: '野外煮食烧水', category: 'recommended', weight_grams: 350, checked: false },
+  { id: 'c23', name: '保暖抓绒', description: '高海拔夜间温度低', category: 'essential', weight_grams: 300, checked: false },
+  { id: 'c24', name: '雪套', description: '防止碎石雪进入鞋内', category: 'recommended', weight_grams: 150, checked: false },
+];
+
+export function getChecklist(routeId: string, difficulty: string): ChecklistData {
+  let items = [...baseItems];
+  if (difficulty === 'hard' || difficulty === 'expert') {
+    items = [...items, ...hardExtraItems];
+  }
+  return {
+    route_id: routeId,
+    route_name: '',
+    departure_time: new Date(Date.now() + 86400000).toISOString(),
+    weather_summary: '晴转多云，15-22°C，微风',
+    items,
+    total_weight_suggestion_grams: 7500,
+  };
+}

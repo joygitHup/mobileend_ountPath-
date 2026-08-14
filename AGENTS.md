@@ -259,3 +259,50 @@ import { Screen } from '../../../components/Screen';
 ## 本地开发
 
 `coze dev`：用来首次启动前后端服务，也可以用来重启前后端服务（该命令会先尝试杀掉占用端口的进程，再启动服务）
+
+## 山途 App 项目信息
+
+### 项目概述
+山途（MountPath）——面向徒步爱好者的智能决策与安全保障平台。基于 Expo + React Native + Express 的跨平台 App，适配 iOS / Android / 鸿蒙。
+
+### 技术栈
+- 前端：Expo SDK 54 + React Native + Expo Router + Uniwind (Tailwind v4)
+- 后端：Express.js + TypeScript
+- 样式：Tailwind CSS v4 + Uniwind，自然有机风主题（森林绿/大地色系）
+- 图标：FontAwesome6
+- 动画：react-native-reanimated
+
+### 路由结构（Tabs 模式）
+```
+app/
+├── _layout.tsx              # 根布局（Stack 包裹 Tabs）
+├── (tabs)/
+│   ├── _layout.tsx          # 底部 Tab Bar（首页/行程/社区/我的）
+│   ├── index.tsx            # 首页 → screens/home
+│   ├── trip.tsx             # 行程 → screens/trip
+│   ├── community.tsx        # 社区 → screens/community
+│   └── profile.tsx          # 我的 → screens/profile
+├── route-detail.tsx         # 路线详情 → screens/route-detail
+├── checklist.tsx            # 智能准备清单 → screens/checklist
+└── guard.tsx                # 实时守护 → screens/guard
+```
+
+### 后端 API（/api/v1）
+- `GET /routes` - 路线列表（含五维评分、匹配度）
+- `GET /routes/:id` - 路线详情
+- `GET /checklist/:routeId` - 智能准备清单
+- `GET /community/posts` - 社区帖子
+- `GET /community/leaders` - 认证领队
+- `POST /guard/start` - 开始守护
+- `POST /guard/sos` - SOS 求救
+- `POST /guard/checkin` - 位置上报
+
+### 预览方式
+- `coze dev` 启动，前端 5000，后端 9091
+- 数据文件在 `server/src/data/` 下（routes.ts, checklist.ts, community.ts）
+
+### 主题定制
+- Design tokens 入口：`client/global.css`
+- 主色：森林绿（#2D501E）、苔藓绿（#4A7C3F）
+- 辅色：大地棕（#8B6914）、陶土橙（#C4501A）
+- 风险色：琥珀黄（#D4A017）、警示红（#C4501A）
