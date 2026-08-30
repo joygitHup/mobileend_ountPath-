@@ -861,7 +861,8 @@ export default function RouteDetailScreen() {
             <View className="px-3 py-1.5 rounded-full bg-default">
               <Text className="text-xs font-medium text-foreground">折返率 {route.turnaround_rate}%</Text>
             </View>
-            {route.best_season.map((s) => (
+            {route.best_season && route.best_season.length > 0 ? (
+               route.best_season.map((s) => (
               <View
                 key={s}
                 className="px-3 py-1.5 rounded-full"
@@ -871,7 +872,12 @@ export default function RouteDetailScreen() {
                   {s}
                 </Text>
               </View>
-            ))}
+            ))
+          ):(
+            <View className="px-3 py-1.5 rounded-full bg-default">
+              <Text className="text-xs font-medium text-foreground">最佳季节 暂无数据</Text>
+            </View>
+              )}
           </View>
         </Card>
 
@@ -1414,7 +1420,7 @@ export default function RouteDetailScreen() {
         {/* 补给点（保留） */}
         <Card>
           <Text className="text-lg font-bold text-foreground mb-4">补给点</Text>
-          {route.checkpoints.map((cp, i) => (
+          {route.checkpoints?.map((cp, i) => (
             <View key={cp.name} className="flex-row items-start mb-3">
               <View className="items-center mr-3">
                 <View
@@ -1465,7 +1471,9 @@ export default function RouteDetailScreen() {
                 </View>
               </View>
             </View>
-          ))}
+          ))??
+            <Text className="text-xs font-medium text-foreground">补给点 暂无数据</Text>
+          }
         </Card>
 
         <TouchableOpacity onPress={joinTrip} className="mx-5 mt-4 mb-2" activeOpacity={0.85}>

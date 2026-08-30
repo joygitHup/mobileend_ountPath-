@@ -942,9 +942,9 @@ export default function CommunityScreen() {
                       ))}
                     </View>
                     <View className="flex-row items-center gap-3 mt-3">
-                      <Text className="text-xs text-muted">评分 {leader.stats.avg_rating}</Text>
+                      <Text className="text-xs text-muted">评分 {leader?.stats?.avg_rating?? '暂无数据'}</Text>
                       <Text className="text-xs text-muted">
-                        事故率 {leader.stats.accident_rate}%
+                        事故率 {leader?.stats?.accident_rate?? '0'}%
                       </Text>
                     </View>
                   </View>

@@ -51,7 +51,7 @@ func NewRouter(gdb *gorm.DB, cfg config.Config) *gin.Engine {
 	api := r.Group("/api/v1")
 	{
 		api.POST("/auth/login", s.login)
-
+        println("✅ 路由注册: /api/v1/auth/login")
 		api.GET("/routes/discover", s.routesDiscover)
 		api.GET("/routes/search", s.routesSearch)
 		api.GET("/routes", s.routesList)

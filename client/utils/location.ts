@@ -43,10 +43,38 @@ function withTimeout<T>(promise: Promise<T>, ms: number): Promise<T> {
 
 /** 高精度定位（守护 / SOS / 轨迹）；超时返回 null */
 export async function getBestPosition(timeoutMs = 12000): Promise<PositionFix | null> {
-  const { status } = await Location.requestForegroundPermissionsAsync();
-  if (status !== 'granted') return null;
-
   try {
+    // 1. 请求权限
+    const { status } = await Location.requestForegroundPermissionsAsync();
+    console.log('📍 位置权限状态:', status);
+
+    if (status !== 'granted') {
+      console.warn('📍 位置权限被拒绝，尝试使用缓存位置');
+      // 尝试用缓存位置
+      try {
+        const last = await Location.getLastKnownPositionAsync();
+        if (last) {
+          const ageMs = Date.now() - last.timestamp;
+          if (ageMs <= LOCATION_FRESH_MS) {
+            console.log('📍 使用缓存位置 (age:', ageMs, 'ms)');
+            return {
+              lat: last.coords.latitude,
+              lng: last.coords.longitude,
+              accuracy: last.coords.accuracy ?? null,
+              altitude: last.coords.altitude ?? null,
+              timestamp: new Date(last.timestamp).toISOString(),
+            };
+          }
+        }
+      } catch (cacheError) {
+        console.warn('📍 获取缓存位置失败:', cacheError);
+      }
+      return null;
+    }
+
+    console.log('📍 权限已授予，正在获取精确位置...');
+
+    // 2. 获取精确位置
     const pos = await withTimeout(
       Location.getCurrentPositionAsync({
         accuracy:
@@ -58,6 +86,9 @@ export async function getBestPosition(timeoutMs = 12000): Promise<PositionFix | 
       }),
       timeoutMs
     );
+
+    console.log('📍 位置获取成功:', pos.coords.latitude, pos.coords.longitude);
+
     return {
       lat: pos.coords.latitude,
       lng: pos.coords.longitude,
@@ -65,24 +96,30 @@ export async function getBestPosition(timeoutMs = 12000): Promise<PositionFix | 
       altitude: pos.coords.altitude ?? null,
       timestamp: new Date(pos.timestamp).toISOString(),
     };
-  } catch {
+  } catch (error) {
+    console.error('📍 获取位置失败:', error);
+
+    // 3. 降级：尝试用缓存位置
     try {
       const last = await Location.getLastKnownPositionAsync();
-      if (!last) return null;
-      const ageMs = Date.now() - last.timestamp;
-      // 超时兜底：拒绝过旧或过粗的缓存点，避免 SOS/打卡上报陈旧坐标
-      if (ageMs > 120_000) return null;
-      if (last.coords.accuracy != null && last.coords.accuracy > 200) return null;
-      return {
-        lat: last.coords.latitude,
-        lng: last.coords.longitude,
-        accuracy: last.coords.accuracy ?? null,
-        altitude: last.coords.altitude ?? null,
-        timestamp: new Date(last.timestamp).toISOString(),
-      };
-    } catch {
-      return null;
+      if (last) {
+        const ageMs = Date.now() - last.timestamp;
+        if (ageMs <= LOCATION_FRESH_MS) {
+          console.log('📍 降级使用缓存位置 (age:', ageMs, 'ms)');
+          return {
+            lat: last.coords.latitude,
+            lng: last.coords.longitude,
+            accuracy: last.coords.accuracy ?? null,
+            altitude: last.coords.altitude ?? null,
+            timestamp: new Date(last.timestamp).toISOString(),
+          };
+        }
+      }
+    } catch (cacheError) {
+      console.warn('📍 获取缓存位置失败:', cacheError);
     }
+
+    return null;
   }
 }
 

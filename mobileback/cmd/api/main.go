@@ -21,7 +21,7 @@ func main() {
 	_ = database.Model(&db.User{}).Where("phone = ?", "13800000000").Update("role", "admin").Error
 
 	r := httpapi.NewRouter(database, cfg)
-	addr := ":" + cfg.Port
+	addr := "0.0.0.0:" + cfg.Port
 	log.Printf("mobileback listening on http://localhost%s (db=%s)", addr, cfg.DatabaseURL)
 	if err := r.Run(addr); err != nil {
 		log.Fatal(err)
