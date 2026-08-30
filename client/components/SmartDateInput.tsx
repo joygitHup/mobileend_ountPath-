@@ -111,11 +111,10 @@ export const SmartDateInput = ({
     setDatePickerVisibility(false);
   };
 
+  // 采用本地 ISO，保证 datetime 含时区偏移，date/time 模式也稳定可解析
   const handleConfirm = (date: Date) => {
     hideDatePicker();
-    // 采用带本地偏移的 ISO 字符串，避免 date 模式在非 UTC 时区出现跨天
-    const serverString = dayjs(date).format(format);
-    onChange(serverString);
+    onChange(dayjs(date).toISOString());
   };
 
   // 根据 mode 选择图标

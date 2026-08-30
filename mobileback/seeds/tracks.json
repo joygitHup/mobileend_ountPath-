@@ -1,0 +1,347 @@
+{
+  "r1": {
+    "total": 5,
+    "community_count": 4,
+    "official_id": "trk_official_r1",
+    "recommended_id": "trk_official_r1",
+    "filter_tags": [
+      "亲子",
+      "历史",
+      "慢走",
+      "绕行",
+      "缓坡",
+      "补给",
+      "轻装",
+      "速穿",
+      "雨后"
+    ],
+    "tracks": [
+      {
+        "id": "trk_official_r1",
+        "title": "徽杭古道 · 官方标准路线",
+        "summary": "山途审核发布的标准轨迹，含风险标注与关键补给节点，适合作为默认导航依据。",
+        "is_official": true,
+        "recommended": true,
+        "author": "山途官方",
+        "author_level": 10,
+        "distance_km": 15,
+        "elevation_gain_m": 800,
+        "annotation_count": 6,
+        "use_count": 240,
+        "complete_count": 140,
+        "rating": 4.8,
+        "rating_count": 92,
+        "feedback": {
+          "useful": 90,
+          "outdated": 2,
+          "hard": 8
+        },
+        "tags": [
+          "官方",
+          "标准",
+          "已审核"
+        ],
+        "created_at": "2026-08-01T00:00:00Z",
+        "updated_at": "2026-08-20T00:00:00Z"
+      },
+      {
+        "id": "trk_user_r1_fast",
+        "title": "轻装速穿·补给优先",
+        "summary": "压缩休息点，标注可靠补给与捷径岔口。",
+        "is_official": false,
+        "recommended": false,
+        "author": "山风疾行",
+        "author_level": 7,
+        "distance_km": 14.8,
+        "elevation_gain_m": 790,
+        "annotation_count": 2,
+        "use_count": 56,
+        "complete_count": 48,
+        "rating": 4.3,
+        "rating_count": 20,
+        "feedback": {
+          "useful": 28,
+          "outdated": 4,
+          "hard": 2
+        },
+        "tags": [
+          "轻装",
+          "速穿",
+          "补给",
+          "社区"
+        ],
+        "created_at": "2026-08-18T09:00:00Z",
+        "updated_at": "2026-08-26T12:00:00Z"
+      },
+      {
+        "id": "trk_user_r1_demo",
+        "title": "徽杭·雨后慢走版",
+        "summary": "含蓝天凹无信号提醒与避湿滑石板标注，适合雨后出行参考。",
+        "is_official": false,
+        "recommended": false,
+        "author": "云端漫步",
+        "author_level": 5,
+        "distance_km": 15.2,
+        "elevation_gain_m": 820,
+        "annotation_count": 3,
+        "use_count": 34,
+        "complete_count": 21,
+        "rating": 4.5,
+        "rating_count": 12,
+        "feedback": {
+          "useful": 18,
+          "outdated": 1,
+          "hard": 3
+        },
+        "tags": [
+          "雨后",
+          "慢走",
+          "社区"
+        ],
+        "created_at": "2026-08-22T10:00:00Z",
+        "updated_at": "2026-08-25T08:00:00Z"
+      },
+      {
+        "id": "trk_user_r1_family",
+        "title": "亲子缓坡·多休息版",
+        "summary": "拉长休息间隔标注，避开急陡段。",
+        "is_official": false,
+        "recommended": false,
+        "author": "小鹿一家",
+        "author_level": 3,
+        "distance_km": 15.5,
+        "elevation_gain_m": 800,
+        "annotation_count": 4,
+        "use_count": 12,
+        "complete_count": 6,
+        "rating": 4.1,
+        "rating_count": 5,
+        "feedback": {
+          "useful": 7,
+          "outdated": 0,
+          "hard": 5
+        },
+        "tags": [
+          "亲子",
+          "缓坡",
+          "社区"
+        ],
+        "created_at": "2026-08-20T14:00:00Z",
+        "updated_at": "2026-08-24T16:00:00Z"
+      },
+      {
+        "id": "trk_user_r1_old",
+        "title": "旧版绕行岔路",
+        "summary": "部分路段已改道，仅作历史参考。",
+        "is_official": false,
+        "recommended": false,
+        "author": "老驴记",
+        "author_level": 8,
+        "distance_km": 16.1,
+        "elevation_gain_m": 860,
+        "annotation_count": 1,
+        "use_count": 8,
+        "complete_count": 3,
+        "rating": 3.2,
+        "rating_count": 9,
+        "feedback": {
+          "useful": 2,
+          "outdated": 15,
+          "hard": 4
+        },
+        "tags": [
+          "绕行",
+          "历史",
+          "社区"
+        ],
+        "created_at": "2025-11-01T00:00:00Z",
+        "updated_at": "2026-07-01T00:00:00Z"
+      }
+    ]
+  },
+  "r2": {
+    "total": 1,
+    "community_count": 0,
+    "official_id": "trk_official_r2",
+    "recommended_id": "trk_official_r2",
+    "filter_tags": [],
+    "tracks": [
+      {
+        "id": "trk_official_r2",
+        "title": "武功山穿越 · 官方标准路线",
+        "summary": "山途审核发布的标准轨迹，含风险标注与关键补给节点，适合作为默认导航依据。",
+        "is_official": true,
+        "recommended": true,
+        "author": "山途官方",
+        "author_level": 10,
+        "distance_km": 22,
+        "elevation_gain_m": 1400,
+        "annotation_count": 8,
+        "use_count": 280,
+        "complete_count": 160,
+        "rating": 4.8,
+        "rating_count": 104,
+        "feedback": {
+          "useful": 90,
+          "outdated": 2,
+          "hard": 8
+        },
+        "tags": [
+          "官方",
+          "标准",
+          "已审核"
+        ],
+        "created_at": "2026-08-01T00:00:00Z",
+        "updated_at": "2026-08-20T00:00:00Z"
+      }
+    ]
+  },
+  "r3": {
+    "total": 1,
+    "community_count": 0,
+    "official_id": "trk_official_r3",
+    "recommended_id": "trk_official_r3",
+    "filter_tags": [],
+    "tracks": [
+      {
+        "id": "trk_official_r3",
+        "title": "虎跳峡高路 · 官方标准路线",
+        "summary": "山途审核发布的标准轨迹，含风险标注与关键补给节点，适合作为默认导航依据。",
+        "is_official": true,
+        "recommended": true,
+        "author": "山途官方",
+        "author_level": 10,
+        "distance_km": 16,
+        "elevation_gain_m": 1100,
+        "annotation_count": 10,
+        "use_count": 280,
+        "complete_count": 160,
+        "rating": 4.8,
+        "rating_count": 104,
+        "feedback": {
+          "useful": 90,
+          "outdated": 2,
+          "hard": 8
+        },
+        "tags": [
+          "官方",
+          "标准",
+          "已审核"
+        ],
+        "created_at": "2026-08-01T00:00:00Z",
+        "updated_at": "2026-08-20T00:00:00Z"
+      }
+    ]
+  },
+  "r4": {
+    "total": 1,
+    "community_count": 0,
+    "official_id": "trk_official_r4",
+    "recommended_id": "trk_official_r4",
+    "filter_tags": [],
+    "tracks": [
+      {
+        "id": "trk_official_r4",
+        "title": "南京紫金山绿道 · 官方标准路线",
+        "summary": "山途审核发布的标准轨迹，含风险标注与关键补给节点，适合作为默认导航依据。",
+        "is_official": true,
+        "recommended": true,
+        "author": "山途官方",
+        "author_level": 10,
+        "distance_km": 8,
+        "elevation_gain_m": 200,
+        "annotation_count": 4,
+        "use_count": 160,
+        "complete_count": 100,
+        "rating": 4.8,
+        "rating_count": 68,
+        "feedback": {
+          "useful": 90,
+          "outdated": 2,
+          "hard": 8
+        },
+        "tags": [
+          "官方",
+          "标准",
+          "已审核"
+        ],
+        "created_at": "2026-08-01T00:00:00Z",
+        "updated_at": "2026-08-20T00:00:00Z"
+      }
+    ]
+  },
+  "r5": {
+    "total": 1,
+    "community_count": 0,
+    "official_id": "trk_official_r5",
+    "recommended_id": "trk_official_r5",
+    "filter_tags": [],
+    "tracks": [
+      {
+        "id": "trk_official_r5",
+        "title": "船底顶穿越 · 官方标准路线",
+        "summary": "山途审核发布的标准轨迹，含风险标注与关键补给节点，适合作为默认导航依据。",
+        "is_official": true,
+        "recommended": true,
+        "author": "山途官方",
+        "author_level": 10,
+        "distance_km": 18,
+        "elevation_gain_m": 1200,
+        "annotation_count": 9,
+        "use_count": 320,
+        "complete_count": 180,
+        "rating": 4.8,
+        "rating_count": 116,
+        "feedback": {
+          "useful": 90,
+          "outdated": 2,
+          "hard": 8
+        },
+        "tags": [
+          "官方",
+          "标准",
+          "已审核"
+        ],
+        "created_at": "2026-08-01T00:00:00Z",
+        "updated_at": "2026-08-20T00:00:00Z"
+      }
+    ]
+  },
+  "r6": {
+    "total": 1,
+    "community_count": 0,
+    "official_id": "trk_official_r6",
+    "recommended_id": "trk_official_r6",
+    "filter_tags": [],
+    "tracks": [
+      {
+        "id": "trk_official_r6",
+        "title": "雨崩徒步 · 官方标准路线",
+        "summary": "山途审核发布的标准轨迹，含风险标注与关键补给节点，适合作为默认导航依据。",
+        "is_official": true,
+        "recommended": true,
+        "author": "山途官方",
+        "author_level": 10,
+        "distance_km": 30,
+        "elevation_gain_m": 1800,
+        "annotation_count": 10,
+        "use_count": 280,
+        "complete_count": 160,
+        "rating": 4.8,
+        "rating_count": 104,
+        "feedback": {
+          "useful": 90,
+          "outdated": 2,
+          "hard": 8
+        },
+        "tags": [
+          "官方",
+          "标准",
+          "已审核"
+        ],
+        "created_at": "2026-08-01T00:00:00Z",
+        "updated_at": "2026-08-20T00:00:00Z"
+      }
+    ]
+  }
+}

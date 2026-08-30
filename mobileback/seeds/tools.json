@@ -1,0 +1,92 @@
+[
+  {
+    "id": "altimeter",
+    "name": "海拔仪",
+    "icon": "mountain",
+    "description": "实时海拔，气压计 / GPS 双源校准（演示）",
+    "offline": true,
+    "offline_note": "离线可用",
+    "category": "field"
+  },
+  {
+    "id": "compass",
+    "name": "指南针",
+    "icon": "compass",
+    "description": "方位角与磁偏角校正提醒",
+    "offline": true,
+    "offline_note": "离线可用",
+    "category": "field"
+  },
+  {
+    "id": "measure",
+    "name": "测距工具",
+    "icon": "ruler",
+    "description": "地图两点直线距离测量",
+    "offline": true,
+    "offline_note": "离线可用",
+    "category": "map"
+  },
+  {
+    "id": "contour",
+    "name": "等高线图",
+    "icon": "mountain-sun",
+    "description": "等高线地形图层（演示示意图；真包需 MAP_TILE_CDN）",
+    "offline": false,
+    "offline_note": "演示 · 未配 CDN 不可真下载",
+    "category": "map"
+  },
+  {
+    "id": "satellite",
+    "name": "卫星地图",
+    "icon": "globe",
+    "description": "卫星影像底图（演示；真下载需瓦片 CDN）",
+    "offline": false,
+    "offline_note": "演示 · 未配 CDN 不可真下载",
+    "category": "map"
+  },
+  {
+    "id": "signal",
+    "name": "信号检测",
+    "icon": "signal",
+    "description": "检测当前信号强度并记录沿途点",
+    "offline": false,
+    "offline_note": "需实时网络",
+    "category": "field"
+  },
+  {
+    "id": "camp",
+    "name": "营地标记",
+    "icon": "campground",
+    "description": "附近可露营点与评价（演示数据）",
+    "offline": false,
+    "offline_note": "需数据服务",
+    "category": "analysis"
+  },
+  {
+    "id": "viewshed",
+    "name": "通视分析",
+    "icon": "binoculars",
+    "description": "两点间视野阻挡粗判，仅供参考",
+    "offline": false,
+    "offline_note": "需地形数据",
+    "category": "analysis"
+  },
+  {
+    "id": "profile",
+    "name": "海拔剖面",
+    "icon": "chart-area",
+    "description": "查看路线海拔变化曲线",
+    "offline": true,
+    "offline_note": "离线可用",
+    "category": "analysis"
+  },
+  {
+    "id": "coords",
+    "name": "坐标转换",
+    "icon": "arrows-rotate",
+    "description": "WGS84 / GCJ02 / BD09 互转",
+    "offline": true,
+    "offline_note": "离线可用",
+    "category": "analysis"
+  }
+]

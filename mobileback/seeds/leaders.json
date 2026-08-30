@@ -1,0 +1,57 @@
+[
+  {
+    "id": "l1",
+    "name": "阿峰领队",
+    "avatar_url": "https://images.unsplash.com/photo-1472099645785-5658abf4ff4e?w=100&q=80",
+    "certifications": [
+      "中国登山协会户外指导员",
+      "WFR野外第一反应人",
+      "红十字会急救证"
+    ],
+    "stats": {
+      "total_trips": 156,
+      "total_people": 1200,
+      "accident_rate": 0,
+      "avg_rating": 4.9
+    },
+    "ratings": {
+      "communication": 4.8,
+      "emergency": 5,
+      "professionalism": 4.9,
+      "overall": 4.9
+    },
+    "specialties": [
+      "高海拔",
+      "长线穿越",
+      "新人培训"
+    ],
+    "bio": "3年全职户外领队，走过贡嘎转山、乌孙古道、狼塔C线。安全是我的第一原则。"
+  },
+  {
+    "id": "l2",
+    "name": "山野行者",
+    "avatar_url": "https://images.unsplash.com/photo-1507003211169-0a1dd7228f2d?w=100&q=80",
+    "certifications": [
+      "中国登山协会户外指导员",
+      "LNT无痕山林讲师"
+    ],
+    "stats": {
+      "total_trips": 89,
+      "total_people": 650,
+      "accident_rate": 0.5,
+      "avg_rating": 4.7
+    },
+    "ratings": {
+      "communication": 4.9,
+      "emergency": 4.5,
+      "professionalism": 4.7,
+      "overall": 4.7
+    },
+    "specialties": [
+      "古道文化",
+      "入门级",
+      "亲子户外"
+    ],
+    "bio": "热爱历史与户外的结合，擅长在行走中讲述山川故事。"
+  }
+]

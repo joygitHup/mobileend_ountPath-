@@ -18,6 +18,7 @@ interface ChecklistItem {
 }
 
 interface ChecklistData {
+  trip_id?: string;
   route_id: string;
   route_name: string;
   departure_time: string;
@@ -40,7 +41,7 @@ function ItemCard({
   onToggle: (id: string) => void;
 }) {
   const [expanded, setExpanded] = useState(false);
-  const config = categoryConfig[item.category];
+  const config = categoryConfig[item.category] ?? categoryConfig.recommended;
 
   return (
     <View
@@ -113,7 +114,7 @@ function ItemCard({
 export default function ChecklistScreen() {
   const insets = useSafeAreaInsets();
   const router = useSafeRouter();
-  const params = useSafeSearchParams<{ routeId: string }>();
+  const params = useSafeSearchParams<{ routeId: string; tripId?: string }>();
   const [data, setData] = useState<ChecklistData | null>(null);
   const [loading, setLoading] = useState(true);
 
@@ -135,14 +136,31 @@ export default function ChecklistScreen() {
     }, [params.routeId])
   );
 
-  const toggleItem = (id: string) => {
+  const toggleItem = async (id: string) => {
     if (!data) return;
+    const target = data.items.find((i) => i.id === id);
+    if (!target) return;
+    const nextChecked = !target.checked;
     setData({
       ...data,
       items: data.items.map((item) =>
-        item.id === id ? { ...item, checked: !item.checked } : item
+        item.id === id ? { ...item, checked: nextChecked } : item
       ),
     });
+    try {
+      await fetchApi(`/api/v1/checklist/${params.routeId}/toggle`, {
+        method: 'POST',
+        body: JSON.stringify({ item_id: id, checked: nextChecked }),
+      });
+    } catch {
+      // 回滚
+      setData({
+        ...data,
+        items: data.items.map((item) =>
+          item.id === id ? { ...item, checked: target.checked } : item
+        ),
+      });
+    }
   };
 
   if (loading) {
@@ -184,12 +202,12 @@ export default function ChecklistScreen() {
             <Text className="text-base font-semibold text-foreground ml-2">准备清单</Text>
           </TouchableOpacity>
           <TouchableOpacity
-            onPress={() => router.push('/guard', { routeId: data.route_id })}
+            onPress={() => router.push('/safety-center')}
             className="px-4 py-2 rounded-full"
             style={{ backgroundColor: 'rgba(45,106,79,0.1)' }}
           >
             <Text className="text-sm font-semibold" style={{ color: '#2D6A4F' }}>
-              开始守护
+              安全中心
             </Text>
           </TouchableOpacity>
         </View>

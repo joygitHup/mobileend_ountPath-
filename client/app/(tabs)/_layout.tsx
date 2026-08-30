@@ -1,31 +1,77 @@
 import { Tabs } from 'expo-router';
-import { Platform } from 'react-native';
+import { Platform, View } from 'react-native';
 import { useSafeAreaInsets } from 'react-native-safe-area-context';
 import { FontAwesome6 } from '@expo/vector-icons';
 import { useCSSVariable } from 'uniwind';
+import { useFocusEffect } from 'expo-router';
+import { useCallback } from 'react';
+import { useSeasonTheme } from '@/contexts/SeasonThemeContext';
+import { useNotifications } from '@/contexts/NotificationContext';
+
+function TabDotIcon({
+  name,
+  color,
+  showDot,
+}: {
+  name: 'user' | 'users';
+  color: string;
+  showDot: boolean;
+}) {
+  return (
+    <View>
+      <FontAwesome6 name={name} size={20} color={color} />
+      {showDot ? (
+        <View
+          style={{
+            position: 'absolute',
+            top: -2,
+            right: -6,
+            width: 8,
+            height: 8,
+            borderRadius: 4,
+            backgroundColor: '#C44536',
+            borderWidth: 1.5,
+            borderColor: '#FDF8F0',
+          }}
+        />
+      ) : null}
+    </View>
+  );
+}
 
 export default function TabLayout() {
   const insets = useSafeAreaInsets();
-  const [background, muted, accent, border] = useCSSVariable([
-    '--color-background',
+  const { palette } = useSeasonTheme();
+  const { unreadCount, communityNewCount, refreshAll } = useNotifications();
+  const [muted, accent, border] = useCSSVariable([
     '--color-muted',
     '--color-accent',
     '--color-border',
   ]) as string[];
 
+  useFocusEffect(
+    useCallback(() => {
+      void refreshAll();
+    }, [refreshAll])
+  );
+
+  const bottomInset = Math.max(insets.bottom, Platform.OS === 'web' ? 8 : 0);
+  const tabPadBottom = bottomInset > 8 ? bottomInset - 4 : 8;
+
   let tabBarStyle: Record<string, any> = {
-    backgroundColor: background,
+    backgroundColor: palette.background,
     borderTopWidth: 1,
     borderTopColor: border,
-    paddingBottom: insets.bottom > 0 ? insets.bottom - 8 : 8,
+    paddingBottom: tabPadBottom,
     paddingTop: 8,
-    height: 64 + insets.bottom,
+    height: 56 + tabPadBottom,
   };
 
   if (Platform.OS === 'web') {
     tabBarStyle = {
       ...tabBarStyle,
       height: 'auto' as unknown as number,
+      minHeight: 56 + tabPadBottom,
     };
   }
 
@@ -65,7 +111,7 @@ export default function TabLayout() {
         options={{
           title: '社区',
           tabBarIcon: ({ color }) => (
-            <FontAwesome6 name="users" size={20} color={color} />
+            <TabDotIcon name="users" color={color} showDot={communityNewCount > 0} />
           ),
         }}
       />
@@ -74,7 +120,7 @@ export default function TabLayout() {
         options={{
           title: '我的',
           tabBarIcon: ({ color }) => (
-            <FontAwesome6 name="user" size={20} color={color} />
+            <TabDotIcon name="user" color={color} showDot={unreadCount > 0} />
           ),
         }}
       />

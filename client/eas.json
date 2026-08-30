@@ -1,0 +1,47 @@
+{
+  "cli": {
+    "version": ">= 16.0.0",
+    "appVersionSource": "remote"
+  },
+  "build": {
+    "development": {
+      "developmentClient": true,
+      "distribution": "internal",
+      "ios": {
+        "simulator": true
+      },
+      "android": {
+        "buildType": "apk"
+      },
+      "env": {
+        "EXPO_PUBLIC_COZE_PROJECT_NAME": "山途",
+        "EXPO_PUBLIC_BACKEND_BASE_URL": "http://127.0.0.1:9092"
+      }
+    },
+    "preview": {
+      "distribution": "internal",
+      "android": {
+        "buildType": "apk"
+      },
+      "env": {
+        "EXPO_PUBLIC_COZE_PROJECT_NAME": "山途",
+        "EXPO_PUBLIC_BACKEND_BASE_URL": "https://REPLACE_WITH_YOUR_API_HOST"
+      }
+    },
+    "production": {
+      "android": {
+        "buildType": "app-bundle"
+      },
+      "ios": {
+        "resourceClass": "m-medium"
+      },
+      "env": {
+        "EXPO_PUBLIC_COZE_PROJECT_NAME": "山途",
+        "EXPO_PUBLIC_BACKEND_BASE_URL": "https://REPLACE_WITH_YOUR_API_HOST"
+      }
+    }
+  },
+  "submit": {
+    "production": {}
+  }
+}

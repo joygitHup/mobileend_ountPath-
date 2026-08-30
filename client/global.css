@@ -136,6 +136,16 @@
       --focus: var(--accent);
       --link: var(--foreground);
 
+      /* Custom Brand Colors（须与 light 变量集一致，否则 Uniwind 会直接报错） */
+      --forest: #52B788;
+      --clay: #D4A276;
+      --warm-gold: #E9C46A;
+      --linen: #2A2520;
+      --bark: #F5EFE6;
+      --mist: #A89888;
+      --stream: #52B788;
+      --fire: #C44536;
+
       /* Shadows */
       --surface-shadow: 0 0 0 0 transparent inset; /* No shadow on dark mode */
       --overlay-shadow: 0 0 1px 0 rgba(255, 255, 255, 0.2) inset;

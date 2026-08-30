@@ -1,10 +1,10 @@
-# Expo App + Express.js
+# Expo App + Go（mobileback）
 
 ## 目录结构规范（严格遵循）
 
 当前仓库是一个 monorepo（基于 pnpm 的 workspace）
 
-- Expo 代码在 client 目录，Express.js 代码在 server 目录
+- Expo 代码在 client 目录；主后端为 `mobileback/`（Go :9092）
 - 本模板默认无 Tab Bar，可按需改造
 
 ├── client/                     # React Native 前端代码
@@ -21,10 +21,8 @@
 │   ├── utils/                  # 工具函数
 │   ├── assets/                 # 静态资源
 |   └── package.json            # Expo 应用 package.json
-├── server/                     # 服务端代码根目录 (Express.js)
-|   ├── src/
-│   │   └── index.ts            # 服务端入口文件
-|   └── package.json            # 服务端 package.json
+├── mobileback/                 # 主后端 Go + Gin + SQLite（:9092）
+├── mobilemange/                # 运营管理台（:9093）
 ├── package.json
 ├── .cozeproj                   # 预置脚手架脚本（禁止修改）
 └── .coze                       # 配置文件（禁止修改）
@@ -53,14 +51,11 @@ Uniwind 官方文档：https://docs.uniwind.dev/llms.txt
 ## 如何进行静态校验（TSC + ESLint）
 
 ```bash
-# 对 client 和 server 目录同时进行校验
+# 对 client（及管理台）进行校验
 pnpm -w lint:all
 
 # 对 client 目录进行校验
 pnpm -w lint:client
-
-# 对 server 目录进行校验
-pnpm -w lint:server
 ```
 
 ## 如何修改主题模式（跟随系统、固定暗色、固定亮色）
@@ -230,14 +225,11 @@ export { default } from "@/screens/home";
 | 目录 | 安装命令 | 说明 |
 |------|----------|------|
 | `client/` | `npx expo install <package>` | Expo 会自动选择与 SDK 兼容的版本 |
-| `server/` | `pnpm add <package>` | 使用 pnpm 管理后端依赖 |
+| `mobilemange/` | `pnpm add <package> --filter mobilemange` | 运营管理台 |
 
 ```bash
 # client 目录（Expo 项目）
 cd client && npx expo install expo-camera expo-image-picker
-
-# server 目录（Express 项目）
-cd server && pnpm add axios cors
 ```
 
 **网络问题处理**：`npx expo install` 可能因网络原因失败，失败时重试 2 次，仍失败则改用 `pnpm add` 安装

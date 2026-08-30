@@ -1,0 +1,253 @@
+[
+  {
+    "id": "p1",
+    "type": "guide",
+    "title": "徽杭古道两天一夜详细攻略（附装备清单）",
+    "content": "上周末刚走完徽杭古道，全程15公里。第一天鱼川村→蓝天凹扎营，第二天下永来村。蓝天凹段无信号，务必提前报备守护人。",
+    "author": {
+      "name": "山野行者",
+      "avatar_url": "https://images.unsplash.com/photo-1507003211169-0a1dd7228f2d?w=100&q=80",
+      "level": 8,
+      "is_certified_leader": true
+    },
+    "route_id": "r1",
+    "image_urls": [
+      "https://images.unsplash.com/photo-1551632811-561732d1e306?w=600&q=80"
+    ],
+    "likes": 234,
+    "comments": 45,
+    "created_at": "2026-08-20T10:00:00Z",
+    "tags": [
+      "徽杭古道",
+      "攻略",
+      "入门"
+    ],
+    "is_paid": false,
+    "price": 0,
+    "decision_summary": "春秋友好入门；蓝天凹无信号，建议开守护并备头灯"
+  },
+  {
+    "id": "p2",
+    "type": "review",
+    "title": "本周武功山路况：草甸湿滑，金顶云多",
+    "content": "8/25 刚下发云界。夜间有小雨，草甸湿滑，部分木栈发霉。能见度一般，金顶日出概率偏低。补给点正常营业。",
+    "author": {
+      "name": "云端漫步",
+      "avatar_url": "https://images.unsplash.com/photo-1494790108377-be9c29b29330?w=100&q=80",
+      "level": 5,
+      "is_certified_leader": false
+    },
+    "route_id": "r2",
+    "image_urls": [
+      "https://images.unsplash.com/photo-1464822759023-fed622ff2c3b?w=600&q=80"
+    ],
+    "likes": 189,
+    "comments": 32,
+    "created_at": "2026-08-25T08:00:00Z",
+    "tags": [
+      "武功山",
+      "路况",
+      "本周"
+    ],
+    "is_paid": false,
+    "price": 0,
+    "decision_summary": "近期湿滑谨慎；日出不确定，防滑鞋套建议携带"
+  },
+  {
+    "id": "p3",
+    "type": "question",
+    "title": "新手第一次走虎跳峡，求经验和建议",
+    "content": "计划下个月走高路，看到难度和折返率都偏高。爬升强度我大概每周跑步 20km，够不够？28拐有没有水？",
+    "author": {
+      "name": "小林同学",
+      "avatar_url": "https://images.unsplash.com/photo-1438761681033-6461ffad8d80?w=100&q=80",
+      "level": 2,
+      "is_certified_leader": false
+    },
+    "route_id": "r3",
+    "image_urls": [],
+    "likes": 56,
+    "comments": 28,
+    "created_at": "2026-08-26T14:00:00Z",
+    "tags": [
+      "虎跳峡",
+      "新手",
+      "求助"
+    ],
+    "is_paid": false,
+    "price": 0,
+    "decision_summary": "求证：体能是否匹配高路、28拐补给与信号",
+    "has_leader_reply": true,
+    "answered": true
+  },
+  {
+    "id": "p4",
+    "type": "guide",
+    "title": "船底顶穿越完整指南——广东户外毕业考",
+    "content": "乱石坡、密林、溪谷分段拆解，含弃赛点与失联预案。非恐吓，是保命清单。只建议有长线经验者。",
+    "author": {
+      "name": "阿峰领队",
+      "avatar_url": "https://images.unsplash.com/photo-1472099645785-5658abf4ff4e?w=100&q=80",
+      "level": 10,
+      "is_certified_leader": true
+    },
+    "route_id": "r5",
+    "image_urls": [
+      "https://images.unsplash.com/photo-1454496522488-7a8e488e8606?w=600&q=80"
+    ],
+    "likes": 312,
+    "comments": 67,
+    "created_at": "2026-08-12T09:00:00Z",
+    "tags": [
+      "船底顶",
+      "专家级",
+      "攻略"
+    ],
+    "is_paid": true,
+    "price": 3,
+    "decision_summary": "专家级；多段无水无信号，必须组队+完整应急方案"
+  },
+  {
+    "id": "p5",
+    "type": "review",
+    "title": "紫金山绿道近期路况：铺装完好，适合早出",
+    "content": "8/28 早高峰前走完。路面干燥，饮水点全开。夏末湿热，建议 7 点前出发，带防晒与至少 1L 水。",
+    "author": {
+      "name": "阳光妈妈",
+      "avatar_url": "https://images.unsplash.com/photo-1544005313-94ddf0286df2?w=100&q=80",
+      "level": 3,
+      "is_certified_leader": false
+    },
+    "route_id": "r4",
+    "image_urls": [
+      "https://images.unsplash.com/photo-1501555088652-021faa106b9b?w=600&q=80"
+    ],
+    "likes": 145,
+    "comments": 22,
+    "created_at": "2026-08-28T11:00:00Z",
+    "tags": [
+      "紫金山",
+      "路况",
+      "亲子"
+    ],
+    "is_paid": false,
+    "price": 0,
+    "decision_summary": "今日友好；避暑早出，亲子友好入门"
+  },
+  {
+    "id": "p6",
+    "type": "question",
+    "title": "雨崩南宗垭口这周能过吗？有没有积雪",
+    "content": "看到有人说垭口风大，求近三天实况。单人轻装是否劝退？",
+    "author": {
+      "name": "风继续吹",
+      "avatar_url": "https://images.unsplash.com/photo-1500648767791-00dcc994a43e?w=100&q=80",
+      "level": 4,
+      "is_certified_leader": false
+    },
+    "route_id": "r6",
+    "image_urls": [],
+    "likes": 41,
+    "comments": 3,
+    "created_at": "2026-08-27T16:00:00Z",
+    "tags": [
+      "雨崩",
+      "垭口",
+      "求助"
+    ],
+    "is_paid": false,
+    "price": 0,
+    "decision_summary": "求近三日垭口实况与是否单人劝退",
+    "has_leader_reply": false,
+    "answered": false
+  },
+  {
+    "id": "p7",
+    "type": "review",
+    "title": "徽杭古道本周路况：石板湿，岩口亭水源正常",
+    "content": "8/27 小雨后上路，石板偏滑但无封路。岩口亭有水，蓝天凹依然无信号约 2 小时。",
+    "author": {
+      "name": "山野行者",
+      "avatar_url": "https://images.unsplash.com/photo-1507003211169-0a1dd7228f2d?w=100&q=80",
+      "level": 8,
+      "is_certified_leader": true
+    },
+    "route_id": "r1",
+    "image_urls": [
+      "https://images.unsplash.com/photo-1551632811-561732d1e306?w=600&q=80"
+    ],
+    "likes": 98,
+    "comments": 14,
+    "created_at": "2026-08-27T09:30:00Z",
+    "tags": [
+      "徽杭古道",
+      "路况",
+      "本周"
+    ],
+    "is_paid": false,
+    "price": 0,
+    "decision_summary": "可走但防滑；蓝天凹失联段提前告知家人"
+  },
+  {
+    "id": "p8",
+    "type": "companion",
+    "title": "紫金山绿道 · 明早约伴慢跑轻装",
+    "content": "计划明天早上 7:00 从太平门进，走绿道环线，预计 3 小时。欢迎同节奏亲子/新手，需自备水与防晒。评论区留微信或直接回复「+1」。",
+    "author": {
+      "name": "阳光妈妈",
+      "avatar_url": "https://images.unsplash.com/photo-1544005313-94ddf0286df2?w=100&q=80",
+      "level": 3,
+      "is_certified_leader": false
+    },
+    "route_id": "r4",
+    "trip_id": "trip_seed_r4",
+    "image_urls": [],
+    "likes": 12,
+    "comments": 5,
+    "created_at": "2026-08-28T18:00:00Z",
+    "tags": [
+      "约伴",
+      "紫金山",
+      "亲子"
+    ],
+    "is_paid": false,
+    "price": 0,
+    "decision_summary": "约伴中：明早 7 点太平门，轻装亲子友好",
+    "companion_meta": {
+      "departure_label": "明早 7:00",
+      "seats": 3,
+      "pace": "轻松"
+    }
+  },
+  {
+    "id": "p9",
+    "type": "companion",
+    "title": "徽杭古道周末双人空位，求同节奏",
+    "content": "本周六鱼川进、永来出，已开守护。差 1–2 人组队，要求有过夜露营经验，蓝天凹无信号段互相照应。",
+    "author": {
+      "name": "云端漫步",
+      "avatar_url": "https://images.unsplash.com/photo-1494790108377-be9c29b29330?w=100&q=80",
+      "level": 5,
+      "is_certified_leader": false
+    },
+    "route_id": "r1",
+    "trip_id": null,
+    "image_urls": [],
+    "likes": 28,
+    "comments": 9,
+    "created_at": "2026-08-26T20:00:00Z",
+    "tags": [
+      "约伴",
+      "徽杭古道",
+      "露营"
+    ],
+    "is_paid": false,
+    "price": 0,
+    "decision_summary": "约伴中：周六双日，需露营经验",
+    "companion_meta": {
+      "departure_label": "本周六",
+      "seats": 2,
+      "pace": "正常"
+    }
+  }
+]

@@ -1,0 +1,1684 @@
+{
+  "r1": {
+    "id": "r1",
+    "name": "徽杭古道",
+    "location": "安徽绩溪 — 浙江临安",
+    "province": "安徽",
+    "distance": 15,
+    "elevation_gain": 800,
+    "max_altitude": 1050,
+    "estimated_duration": "1-2天",
+    "difficulty": "moderate",
+    "difficulty_stars": 3,
+    "best_season": [
+      "春",
+      "秋"
+    ],
+    "image_url": "https://images.unsplash.com/photo-1551632811-561732d1e306?w=800&q=80",
+    "real_photo_url": "https://images.unsplash.com/photo-1551632811-561732d1e306?w=800&q=80",
+    "description": "中国十大徒步线路之一，始建于唐代，是古时联系徽州与杭州的重要纽带。全程石板路，沿途古村落、关隘、瀑布交替出现。",
+    "ratings": {
+      "climb_intensity": 5,
+      "terrain_difficulty": 4,
+      "altitude_risk": 2,
+      "signal_coverage": 7,
+      "supply_access": 8
+    },
+    "match_score": 82,
+    "completion_rate": 91,
+    "turnaround_rate": 6,
+    "monthly_stats": [
+      {
+        "month": "3月",
+        "completion": 85,
+        "incidents": 0
+      },
+      {
+        "month": "4月",
+        "completion": 92,
+        "incidents": 0
+      },
+      {
+        "month": "5月",
+        "completion": 95,
+        "incidents": 1
+      },
+      {
+        "month": "10月",
+        "completion": 94,
+        "incidents": 0
+      },
+      {
+        "month": "11月",
+        "completion": 88,
+        "incidents": 1
+      }
+    ],
+    "tags": [
+      "古道",
+      "入门级",
+      "历史文化",
+      "春秋推荐"
+    ],
+    "checkpoints": [
+      {
+        "name": "鱼川村",
+        "distance_km": 0,
+        "has_water": true,
+        "has_signal": true
+      },
+      {
+        "name": "岩口亭",
+        "distance_km": 4,
+        "has_water": true,
+        "has_signal": true
+      },
+      {
+        "name": "蓝天凹",
+        "distance_km": 8,
+        "has_water": true,
+        "has_signal": false
+      },
+      {
+        "name": "永来村",
+        "distance_km": 12,
+        "has_water": true,
+        "has_signal": true
+      },
+      {
+        "name": "浙川村",
+        "distance_km": 15,
+        "has_water": true,
+        "has_signal": true
+      }
+    ],
+    "decision_summary": "节奏友好，更适合春/秋季",
+    "match_reasons": [
+      "与你画像高度契合",
+      "爬升适中",
+      "信号较好"
+    ],
+    "risk_level": "low",
+    "caution_reason": null,
+    "key_checkpoint": "蓝天凹（无信号）",
+    "season_fit": false,
+    "region": "安徽 · 安徽绩溪 — 浙江临安",
+    "terrain_type": "石板古道 / 山林",
+    "ai_difficulty": {
+      "label": "中等",
+      "stars": 3,
+      "score": 3,
+      "basis": [
+        "爬升强度 5/10",
+        "路面难度 4/10",
+        "海拔风险 2/10",
+        "信号覆盖 7/10",
+        "补给可达 8/10"
+      ]
+    },
+    "overall_rating": 3.6,
+    "rating_count": 291,
+    "risk_markers": [
+      {
+        "id": "r1_w_0",
+        "type": "water",
+        "label": "水源点",
+        "progress": 0,
+        "note": "鱼川村 可取水（建议过滤）"
+      },
+      {
+        "id": "r1_w_1",
+        "type": "water",
+        "label": "水源点",
+        "progress": 0.26666666666666666,
+        "note": "岩口亭 可取水（建议过滤）"
+      },
+      {
+        "id": "r1_ns_2",
+        "type": "no_signal",
+        "label": "无信号区",
+        "progress": 0.5333333333333333,
+        "note": "蓝天凹 附近无可靠信号，请提前报备"
+      },
+      {
+        "id": "r1_w_2",
+        "type": "water",
+        "label": "水源点",
+        "progress": 0.5333333333333333,
+        "note": "蓝天凹 可取水（建议过滤）"
+      },
+      {
+        "id": "r1_w_3",
+        "type": "water",
+        "label": "水源点",
+        "progress": 0.8,
+        "note": "永来村 可取水（建议过滤）"
+      },
+      {
+        "id": "r1_w_4",
+        "type": "water",
+        "label": "水源点",
+        "progress": 1,
+        "note": "浙川村 可取水（建议过滤）"
+      }
+    ],
+    "ai_safety_tips": [
+      {
+        "id": "t1",
+        "level": "warn",
+        "title": "蓝天凹无信号",
+        "body": "蓝天凹段约 2–3km 无信号。出发前开启守护并与家人约定失联窗口。"
+      },
+      {
+        "id": "t2",
+        "level": "info",
+        "title": "石板湿滑",
+        "body": "雨后石板路摩擦系数下降，建议防滑鞋底，陡坡段使用登山杖。"
+      }
+    ],
+    "guidebook": {
+      "safety_reviewed": true,
+      "reviewed_at": "2026-08-20",
+      "summary": "徽杭古道结构化路书：按关键节点说明路况与补给，内容经安全审核后发布。",
+      "nodes": [
+        {
+          "name": "鱼川村",
+          "distance_km": 0,
+          "condition": "补给与信号均可用",
+          "tip": "确认装备与紧急联系人"
+        },
+        {
+          "name": "岩口亭",
+          "distance_km": 4,
+          "condition": "补给与信号均可用"
+        },
+        {
+          "name": "蓝天凹",
+          "distance_km": 8,
+          "condition": "无信号 · 可取水"
+        },
+        {
+          "name": "永来村",
+          "distance_km": 12,
+          "condition": "补给与信号均可用"
+        },
+        {
+          "name": "浙川村",
+          "distance_km": 15,
+          "condition": "补给与信号均可用",
+          "tip": "抵达后报平安"
+        }
+      ],
+      "gear_suggestions": [
+        "防滑徒步鞋",
+        "登山杖",
+        "基础导航",
+        "随身饮水",
+        "急救包与防晒"
+      ],
+      "condition_notes": [
+        "路况类型：石板古道 / 山林",
+        "最佳季节：春、秋",
+        "完成率 91% · 折返率 6%"
+      ]
+    },
+    "elevation_profile": {
+      "points": [
+        {
+          "distance_km": 0,
+          "altitude_m": 370,
+          "label": "鱼川村",
+          "is_peak": false,
+          "is_steep": false
+        },
+        {
+          "distance_km": 4,
+          "altitude_m": 935,
+          "label": "岩口亭",
+          "is_peak": true,
+          "is_steep": false
+        },
+        {
+          "distance_km": 8,
+          "altitude_m": 1050,
+          "label": "蓝天凹",
+          "is_peak": true,
+          "is_steep": false
+        },
+        {
+          "distance_km": 12,
+          "altitude_m": 817,
+          "label": "永来村",
+          "is_peak": false,
+          "is_steep": false
+        },
+        {
+          "distance_km": 15,
+          "altitude_m": 370,
+          "label": "浙川村",
+          "is_peak": false,
+          "is_steep": false
+        }
+      ],
+      "min_m": 370,
+      "max_m": 1050,
+      "total_ascent_m": 800,
+      "steep_segments": [
+        {
+          "from_km": 0,
+          "to_km": 4,
+          "note": "爬升约 565m / 4.0km，建议登山杖"
+        }
+      ],
+      "accuracy_note": "剖面由关键节点与累计爬升推演生成，精度约 ±30–50m，仅供行前参考"
+    }
+  },
+  "r2": {
+    "id": "r2",
+    "name": "武功山穿越",
+    "location": "江西萍乡",
+    "province": "江西",
+    "distance": 22,
+    "elevation_gain": 1400,
+    "max_altitude": 1918,
+    "estimated_duration": "2天",
+    "difficulty": "hard",
+    "difficulty_stars": 4,
+    "best_season": [
+      "春",
+      "夏",
+      "秋"
+    ],
+    "image_url": "https://images.unsplash.com/photo-1464822759023-fed622ff2c3b?w=800&q=80",
+    "real_photo_url": "https://images.unsplash.com/photo-1464822759023-fed622ff2c3b?w=800&q=80",
+    "description": "以高山草甸和云海日出闻名，十万亩高山草甸绵延起伏。金顶海拔1918米，是华中地区最高峰之一。",
+    "ratings": {
+      "climb_intensity": 7,
+      "terrain_difficulty": 6,
+      "altitude_risk": 4,
+      "signal_coverage": 4,
+      "supply_access": 5
+    },
+    "match_score": 65,
+    "completion_rate": 82,
+    "turnaround_rate": 14,
+    "monthly_stats": [
+      {
+        "month": "5月",
+        "completion": 80,
+        "incidents": 2
+      },
+      {
+        "month": "6月",
+        "completion": 78,
+        "incidents": 3
+      },
+      {
+        "month": "9月",
+        "completion": 88,
+        "incidents": 1
+      },
+      {
+        "month": "10月",
+        "completion": 90,
+        "incidents": 0
+      }
+    ],
+    "tags": [
+      "高山草甸",
+      "云海",
+      "进阶",
+      "露营"
+    ],
+    "checkpoints": [
+      {
+        "name": "龙山村",
+        "distance_km": 0,
+        "has_water": true,
+        "has_signal": true
+      },
+      {
+        "name": "发云界",
+        "distance_km": 8,
+        "has_water": true,
+        "has_signal": false
+      },
+      {
+        "name": "金顶",
+        "distance_km": 14,
+        "has_water": true,
+        "has_signal": false
+      },
+      {
+        "name": "吊马桩",
+        "distance_km": 18,
+        "has_water": true,
+        "has_signal": true
+      },
+      {
+        "name": "景区大门",
+        "distance_km": 22,
+        "has_water": true,
+        "has_signal": true
+      }
+    ],
+    "decision_summary": "体能要求高，夏季适宜",
+    "match_reasons": [
+      "整体匹配尚可",
+      "正值适宜季节"
+    ],
+    "risk_level": "medium",
+    "caution_reason": "折返率 14%",
+    "key_checkpoint": "发云界（无信号）",
+    "season_fit": true,
+    "region": "江西 · 江西萍乡",
+    "terrain_type": "高山草甸 / 碎石",
+    "ai_difficulty": {
+      "label": "困难",
+      "stars": 4,
+      "score": 6,
+      "basis": [
+        "爬升强度 7/10",
+        "路面难度 6/10",
+        "海拔风险 4/10",
+        "信号覆盖 4/10",
+        "补给可达 5/10"
+      ]
+    },
+    "overall_rating": 3.5,
+    "rating_count": 322,
+    "risk_markers": [
+      {
+        "id": "r2_w_0",
+        "type": "water",
+        "label": "水源点",
+        "progress": 0,
+        "note": "龙山村 可取水（建议过滤）"
+      },
+      {
+        "id": "r2_ns_1",
+        "type": "no_signal",
+        "label": "无信号区",
+        "progress": 0.36363636363636365,
+        "note": "发云界 附近无可靠信号，请提前报备"
+      },
+      {
+        "id": "r2_w_1",
+        "type": "water",
+        "label": "水源点",
+        "progress": 0.36363636363636365,
+        "note": "发云界 可取水（建议过滤）"
+      },
+      {
+        "id": "r2_ns_2",
+        "type": "no_signal",
+        "label": "无信号区",
+        "progress": 0.6363636363636364,
+        "note": "金顶 附近无可靠信号，请提前报备"
+      },
+      {
+        "id": "r2_w_2",
+        "type": "water",
+        "label": "水源点",
+        "progress": 0.6363636363636364,
+        "note": "金顶 可取水（建议过滤）"
+      },
+      {
+        "id": "r2_w_3",
+        "type": "water",
+        "label": "水源点",
+        "progress": 0.8181818181818182,
+        "note": "吊马桩 可取水（建议过滤）"
+      },
+      {
+        "id": "r2_w_4",
+        "type": "water",
+        "label": "水源点",
+        "progress": 1,
+        "note": "景区大门 可取水（建议过滤）"
+      },
+      {
+        "id": "r2_steep",
+        "type": "steep",
+        "label": "陡坡",
+        "progress": 0.35,
+        "note": "约 490m 连续爬升段，建议登山杖"
+      }
+    ],
+    "ai_safety_tips": [
+      {
+        "id": "ns",
+        "level": "warn",
+        "title": "多段无信号",
+        "body": "路线信号覆盖偏弱，出发前开启实时守护，并告知紧急联系人预计归队时间。"
+      },
+      {
+        "id": "steep",
+        "level": "warn",
+        "title": "连续爬升段",
+        "body": "累计爬升约 1400m，陡坡段建议携带登山杖，控制配速与补水节奏。"
+      }
+    ],
+    "guidebook": {
+      "safety_reviewed": true,
+      "reviewed_at": "2026-08-20",
+      "summary": "武功山穿越结构化路书：按关键节点说明路况与补给，内容经安全审核后发布。",
+      "nodes": [
+        {
+          "name": "龙山村",
+          "distance_km": 0,
+          "condition": "补给与信号均可用",
+          "tip": "确认装备与紧急联系人"
+        },
+        {
+          "name": "发云界",
+          "distance_km": 8,
+          "condition": "无信号 · 可取水"
+        },
+        {
+          "name": "金顶",
+          "distance_km": 14,
+          "condition": "无信号 · 可取水"
+        },
+        {
+          "name": "吊马桩",
+          "distance_km": 18,
+          "condition": "补给与信号均可用"
+        },
+        {
+          "name": "景区大门",
+          "distance_km": 22,
+          "condition": "补给与信号均可用",
+          "tip": "抵达后报平安"
+        }
+      ],
+      "gear_suggestions": [
+        "防滑徒步鞋",
+        "登山杖",
+        "充电宝 / 离线地图",
+        "随身饮水",
+        "急救包与防晒"
+      ],
+      "condition_notes": [
+        "路况类型：高山草甸 / 碎石",
+        "最佳季节：春、夏、秋",
+        "完成率 82% · 折返率 14%",
+        "碎石/湿滑概率偏高，雨后谨慎通行"
+      ]
+    },
+    "elevation_profile": {
+      "points": [
+        {
+          "distance_km": 0,
+          "altitude_m": 728,
+          "label": "龙山村",
+          "is_peak": false,
+          "is_steep": false
+        },
+        {
+          "distance_km": 8,
+          "altitude_m": 1918,
+          "label": "发云界",
+          "is_peak": true,
+          "is_steep": true
+        },
+        {
+          "distance_km": 14,
+          "altitude_m": 1918,
+          "label": "金顶",
+          "is_peak": true,
+          "is_steep": false
+        },
+        {
+          "distance_km": 18,
+          "altitude_m": 1447,
+          "label": "吊马桩",
+          "is_peak": false,
+          "is_steep": false
+        },
+        {
+          "distance_km": 22,
+          "altitude_m": 728,
+          "label": "景区大门",
+          "is_peak": false,
+          "is_steep": false
+        }
+      ],
+      "min_m": 728,
+      "max_m": 1918,
+      "total_ascent_m": 1400,
+      "steep_segments": [
+        {
+          "from_km": 0,
+          "to_km": 8,
+          "note": "爬升约 1190m / 8.0km，建议登山杖"
+        }
+      ],
+      "accuracy_note": "剖面由关键节点与累计爬升推演生成，精度约 ±30–50m，仅供行前参考"
+    }
+  },
+  "r3": {
+    "id": "r3",
+    "name": "虎跳峡高路",
+    "location": "云南香格里拉",
+    "province": "云南",
+    "distance": 16,
+    "elevation_gain": 1100,
+    "max_altitude": 2670,
+    "estimated_duration": "1-2天",
+    "difficulty": "hard",
+    "difficulty_stars": 4,
+    "best_season": [
+      "春",
+      "秋"
+    ],
+    "image_url": "https://images.unsplash.com/photo-1486870591958-9b9d0d1dda99?w=800&q=80",
+    "real_photo_url": "https://images.unsplash.com/photo-1486870591958-9b9d0d1dda99?w=800&q=80",
+    "description": "世界最深峡谷之一，高路徒步路线沿哈巴雪山山腰行进，俯瞰金沙江奔腾而下，对面是玉龙十三峰。",
+    "ratings": {
+      "climb_intensity": 8,
+      "terrain_difficulty": 7,
+      "altitude_risk": 5,
+      "signal_coverage": 3,
+      "supply_access": 4
+    },
+    "match_score": 48,
+    "completion_rate": 76,
+    "turnaround_rate": 20,
+    "monthly_stats": [
+      {
+        "month": "4月",
+        "completion": 82,
+        "incidents": 1
+      },
+      {
+        "month": "5月",
+        "completion": 78,
+        "incidents": 2
+      },
+      {
+        "month": "10月",
+        "completion": 85,
+        "incidents": 1
+      },
+      {
+        "month": "11月",
+        "completion": 80,
+        "incidents": 2
+      }
+    ],
+    "tags": [
+      "峡谷",
+      "高海拔",
+      "进阶",
+      "壮美"
+    ],
+    "checkpoints": [
+      {
+        "name": "桥头",
+        "distance_km": 0,
+        "has_water": true,
+        "has_signal": true
+      },
+      {
+        "name": "纳西雅阁",
+        "distance_km": 5,
+        "has_water": true,
+        "has_signal": false
+      },
+      {
+        "name": "28拐",
+        "distance_km": 7,
+        "has_water": false,
+        "has_signal": false
+      },
+      {
+        "name": "Halfway客栈",
+        "distance_km": 10,
+        "has_water": true,
+        "has_signal": false
+      },
+      {
+        "name": "中虎跳",
+        "distance_km": 16,
+        "has_water": true,
+        "has_signal": true
+      }
+    ],
+    "decision_summary": "体能要求高，更适合春/秋季",
+    "match_reasons": [
+      "匹配偏低，请谨慎选择",
+      "爬升强度大",
+      "信号薄弱"
+    ],
+    "risk_level": "high",
+    "caution_reason": "折返率 20% · 海拔风险偏高 · 多段无信号",
+    "key_checkpoint": "纳西雅阁（无信号）",
+    "season_fit": false,
+    "region": "云南 · 云南香格里拉",
+    "terrain_type": "峡谷高路 / 碎石陡坡",
+    "ai_difficulty": {
+      "label": "困难",
+      "stars": 4,
+      "score": 7,
+      "basis": [
+        "爬升强度 8/10",
+        "路面难度 7/10",
+        "海拔风险 5/10",
+        "信号覆盖 3/10",
+        "补给可达 4/10"
+      ]
+    },
+    "overall_rating": 3.5,
+    "rating_count": 316,
+    "risk_markers": [
+      {
+        "id": "r3_w_0",
+        "type": "water",
+        "label": "水源点",
+        "progress": 0,
+        "note": "桥头 可取水（建议过滤）"
+      },
+      {
+        "id": "r3_ns_1",
+        "type": "no_signal",
+        "label": "无信号区",
+        "progress": 0.3125,
+        "note": "纳西雅阁 附近无可靠信号，请提前报备"
+      },
+      {
+        "id": "r3_w_1",
+        "type": "water",
+        "label": "水源点",
+        "progress": 0.3125,
+        "note": "纳西雅阁 可取水（建议过滤）"
+      },
+      {
+        "id": "r3_ns_2",
+        "type": "no_signal",
+        "label": "无信号区",
+        "progress": 0.4375,
+        "note": "28拐 附近无可靠信号，请提前报备"
+      },
+      {
+        "id": "r3_ns_3",
+        "type": "no_signal",
+        "label": "无信号区",
+        "progress": 0.625,
+        "note": "Halfway客栈 附近无可靠信号，请提前报备"
+      },
+      {
+        "id": "r3_w_3",
+        "type": "water",
+        "label": "水源点",
+        "progress": 0.625,
+        "note": "Halfway客栈 可取水（建议过滤）"
+      },
+      {
+        "id": "r3_w_4",
+        "type": "water",
+        "label": "水源点",
+        "progress": 1,
+        "note": "中虎跳 可取水（建议过滤）"
+      },
+      {
+        "id": "r3_steep",
+        "type": "steep",
+        "label": "陡坡",
+        "progress": 0.35,
+        "note": "约 385m 连续爬升段，建议登山杖"
+      },
+      {
+        "id": "r3_cliff",
+        "type": "cliff",
+        "label": "悬崖/险段",
+        "progress": 0.55,
+        "note": "临空或碎石险段，注意落脚与间距通过"
+      },
+      {
+        "id": "r3_steep2",
+        "type": "steep",
+        "label": "陡坡",
+        "progress": 0.72,
+        "note": "后半程陡坡，预留体力与折返窗口"
+      }
+    ],
+    "ai_safety_tips": [
+      {
+        "id": "t1",
+        "level": "danger",
+        "title": "28拐无水无信号",
+        "body": "此路段约 500m 陡坡且无水无信号，至少携带 2.5L 水与登山杖，避免午后强光下硬冲。"
+      },
+      {
+        "id": "t2",
+        "level": "warn",
+        "title": "高路临空",
+        "body": "部分路段临空感强，恐高者注意内侧行进，勿在窄道并排停留拍照。"
+      }
+    ],
+    "guidebook": {
+      "safety_reviewed": true,
+      "reviewed_at": "2026-08-20",
+      "summary": "虎跳峡高路结构化路书：按关键节点说明路况与补给，内容经安全审核后发布。",
+      "nodes": [
+        {
+          "name": "桥头",
+          "distance_km": 0,
+          "condition": "补给与信号均可用",
+          "tip": "确认装备与紧急联系人"
+        },
+        {
+          "name": "纳西雅阁",
+          "distance_km": 5,
+          "condition": "无信号 · 可取水"
+        },
+        {
+          "name": "28拐",
+          "distance_km": 7,
+          "condition": "无可靠水源 · 无信号"
+        },
+        {
+          "name": "Halfway客栈",
+          "distance_km": 10,
+          "condition": "无信号 · 可取水"
+        },
+        {
+          "name": "中虎跳",
+          "distance_km": 16,
+          "condition": "补给与信号均可用",
+          "tip": "抵达后报平安"
+        }
+      ],
+      "gear_suggestions": [
+        "防滑徒步鞋",
+        "登山杖",
+        "充电宝 / 离线地图",
+        "饮水 ≥ 3L",
+        "急救包与防晒",
+        "保暖层 / 防风壳"
+      ],
+      "condition_notes": [
+        "路况类型：峡谷高路 / 碎石陡坡",
+        "最佳季节：春、秋",
+        "完成率 76% · 折返率 20%",
+        "碎石/湿滑概率偏高，雨后谨慎通行"
+      ]
+    },
+    "elevation_profile": {
+      "points": [
+        {
+          "distance_km": 0,
+          "altitude_m": 1735,
+          "label": "桥头",
+          "is_peak": false,
+          "is_steep": false
+        },
+        {
+          "distance_km": 5,
+          "altitude_m": 2604,
+          "label": "纳西雅阁",
+          "is_peak": true,
+          "is_steep": true
+        },
+        {
+          "distance_km": 7,
+          "altitude_m": 2670,
+          "label": "28拐",
+          "is_peak": true,
+          "is_steep": true
+        },
+        {
+          "distance_km": 10,
+          "altitude_m": 2670,
+          "label": "Halfway客栈",
+          "is_peak": true,
+          "is_steep": false
+        },
+        {
+          "distance_km": 16,
+          "altitude_m": 1735,
+          "label": "中虎跳",
+          "is_peak": false,
+          "is_steep": false
+        }
+      ],
+      "min_m": 1735,
+      "max_m": 2670,
+      "total_ascent_m": 1100,
+      "steep_segments": [
+        {
+          "from_km": 0,
+          "to_km": 5,
+          "note": "爬升约 869m / 5.0km，建议登山杖"
+        }
+      ],
+      "accuracy_note": "剖面由关键节点与累计爬升推演生成，精度约 ±30–50m，仅供行前参考"
+    }
+  },
+  "r4": {
+    "id": "r4",
+    "name": "南京紫金山绿道",
+    "location": "江苏南京",
+    "province": "江苏",
+    "distance": 8,
+    "elevation_gain": 200,
+    "max_altitude": 448,
+    "estimated_duration": "半天",
+    "difficulty": "easy",
+    "difficulty_stars": 1,
+    "best_season": [
+      "春",
+      "夏",
+      "秋",
+      "冬"
+    ],
+    "image_url": "https://images.unsplash.com/photo-1501555088652-021faa106b9b?w=800&q=80",
+    "real_photo_url": "https://images.unsplash.com/photo-1501555088652-021faa106b9b?w=800&q=80",
+    "description": "城市中的森林氧吧，全程铺装路面，适合亲子和新手。沿途有中山陵、明孝陵等历史遗迹，四季景色各异。",
+    "ratings": {
+      "climb_intensity": 2,
+      "terrain_difficulty": 1,
+      "altitude_risk": 1,
+      "signal_coverage": 10,
+      "supply_access": 10
+    },
+    "match_score": 95,
+    "completion_rate": 99,
+    "turnaround_rate": 1,
+    "monthly_stats": [
+      {
+        "month": "3月",
+        "completion": 99,
+        "incidents": 0
+      },
+      {
+        "month": "6月",
+        "completion": 98,
+        "incidents": 0
+      },
+      {
+        "month": "9月",
+        "completion": 99,
+        "incidents": 0
+      },
+      {
+        "month": "12月",
+        "completion": 97,
+        "incidents": 0
+      }
+    ],
+    "tags": [
+      "入门级",
+      "亲子",
+      "城市",
+      "四季皆宜"
+    ],
+    "checkpoints": [
+      {
+        "name": "太平门",
+        "distance_km": 0,
+        "has_water": true,
+        "has_signal": true
+      },
+      {
+        "name": "紫金山天文台",
+        "distance_km": 3,
+        "has_water": true,
+        "has_signal": true
+      },
+      {
+        "name": "头陀岭",
+        "distance_km": 5,
+        "has_water": true,
+        "has_signal": true
+      },
+      {
+        "name": "体育公园",
+        "distance_km": 8,
+        "has_water": true,
+        "has_signal": true
+      }
+    ],
+    "decision_summary": "轻松入门，夏季适宜",
+    "match_reasons": [
+      "与你画像高度契合",
+      "爬升适中",
+      "信号较好"
+    ],
+    "risk_level": "low",
+    "caution_reason": null,
+    "key_checkpoint": "头陀岭 · 5km",
+    "season_fit": true,
+    "region": "江苏 · 江苏南京",
+    "terrain_type": "城市铺装绿道",
+    "ai_difficulty": {
+      "label": "轻松",
+      "stars": 1,
+      "score": 1,
+      "basis": [
+        "爬升强度 2/10",
+        "路面难度 1/10",
+        "海拔风险 1/10",
+        "信号覆盖 10/10",
+        "补给可达 10/10"
+      ]
+    },
+    "overall_rating": 3.8,
+    "rating_count": 219,
+    "risk_markers": [
+      {
+        "id": "r4_w_0",
+        "type": "water",
+        "label": "水源点",
+        "progress": 0,
+        "note": "太平门 可取水（建议过滤）"
+      },
+      {
+        "id": "r4_w_1",
+        "type": "water",
+        "label": "水源点",
+        "progress": 0.375,
+        "note": "紫金山天文台 可取水（建议过滤）"
+      },
+      {
+        "id": "r4_w_2",
+        "type": "water",
+        "label": "水源点",
+        "progress": 0.625,
+        "note": "头陀岭 可取水（建议过滤）"
+      },
+      {
+        "id": "r4_w_3",
+        "type": "water",
+        "label": "水源点",
+        "progress": 1,
+        "note": "体育公园 可取水（建议过滤）"
+      }
+    ],
+    "ai_safety_tips": [
+      {
+        "id": "ok",
+        "level": "info",
+        "title": "整体风险可控",
+        "body": "路况相对友好，仍建议携带基础急救包，并避开雷雨时段出行。"
+      }
+    ],
+    "guidebook": {
+      "safety_reviewed": true,
+      "reviewed_at": "2026-08-20",
+      "summary": "南京紫金山绿道结构化路书：按关键节点说明路况与补给，内容经安全审核后发布。",
+      "nodes": [
+        {
+          "name": "太平门",
+          "distance_km": 0,
+          "condition": "补给与信号均可用",
+          "tip": "确认装备与紧急联系人"
+        },
+        {
+          "name": "紫金山天文台",
+          "distance_km": 3,
+          "condition": "补给与信号均可用"
+        },
+        {
+          "name": "头陀岭",
+          "distance_km": 5,
+          "condition": "补给与信号均可用"
+        },
+        {
+          "name": "体育公园",
+          "distance_km": 8,
+          "condition": "补给与信号均可用",
+          "tip": "抵达后报平安"
+        }
+      ],
+      "gear_suggestions": [
+        "防滑徒步鞋",
+        "轻量背包",
+        "基础导航",
+        "随身饮水",
+        "急救包与防晒"
+      ],
+      "condition_notes": [
+        "路况类型：城市铺装绿道",
+        "最佳季节：春、夏、秋、冬",
+        "完成率 99% · 折返率 1%"
+      ]
+    },
+    "elevation_profile": {
+      "points": [
+        {
+          "distance_km": 0,
+          "altitude_m": 278,
+          "label": "太平门",
+          "is_peak": false,
+          "is_steep": false
+        },
+        {
+          "distance_km": 3,
+          "altitude_m": 448,
+          "label": "紫金山天文台",
+          "is_peak": true,
+          "is_steep": false
+        },
+        {
+          "distance_km": 5,
+          "altitude_m": 448,
+          "label": "头陀岭",
+          "is_peak": true,
+          "is_steep": false
+        },
+        {
+          "distance_km": 8,
+          "altitude_m": 278,
+          "label": "体育公园",
+          "is_peak": false,
+          "is_steep": false
+        }
+      ],
+      "min_m": 278,
+      "max_m": 448,
+      "total_ascent_m": 200,
+      "steep_segments": [],
+      "accuracy_note": "剖面由关键节点与累计爬升推演生成，精度约 ±30–50m，仅供行前参考"
+    }
+  },
+  "r5": {
+    "id": "r5",
+    "name": "船底顶穿越",
+    "location": "广东韶关",
+    "province": "广东",
+    "distance": 18,
+    "elevation_gain": 1200,
+    "max_altitude": 1586,
+    "estimated_duration": "2天",
+    "difficulty": "expert",
+    "difficulty_stars": 5,
+    "best_season": [
+      "秋",
+      "冬"
+    ],
+    "image_url": "https://images.unsplash.com/photo-1454496522488-7a8e488e8606?w=800&q=80",
+    "real_photo_url": "https://images.unsplash.com/photo-1454496522488-7a8e488e8606?w=800&q=80",
+    "description": "广东第一高峰，被称为\"广东户外毕业考\"。涵盖溪谷、密林、草甸、乱石坡等多种地形，对体能和意志力要求极高。",
+    "ratings": {
+      "climb_intensity": 9,
+      "terrain_difficulty": 9,
+      "altitude_risk": 3,
+      "signal_coverage": 2,
+      "supply_access": 2
+    },
+    "match_score": 30,
+    "completion_rate": 65,
+    "turnaround_rate": 28,
+    "monthly_stats": [
+      {
+        "month": "10月",
+        "completion": 72,
+        "incidents": 3
+      },
+      {
+        "month": "11月",
+        "completion": 70,
+        "incidents": 4
+      },
+      {
+        "month": "12月",
+        "completion": 68,
+        "incidents": 5
+      }
+    ],
+    "tags": [
+      "专家级",
+      "乱石坡",
+      "广东毕业考",
+      "高风险"
+    ],
+    "checkpoints": [
+      {
+        "name": "罗坑镇",
+        "distance_km": 0,
+        "has_water": true,
+        "has_signal": true
+      },
+      {
+        "name": "乱石坡底",
+        "distance_km": 6,
+        "has_water": false,
+        "has_signal": false
+      },
+      {
+        "name": "船底顶",
+        "distance_km": 10,
+        "has_water": false,
+        "has_signal": false
+      },
+      {
+        "name": "望顶营地",
+        "distance_km": 14,
+        "has_water": true,
+        "has_signal": false
+      },
+      {
+        "name": "联和村",
+        "distance_km": 18,
+        "has_water": true,
+        "has_signal": true
+      }
+    ],
+    "decision_summary": "仅建议有经验者，更适合秋/冬季",
+    "match_reasons": [
+      "匹配偏低，请谨慎选择",
+      "爬升强度大",
+      "信号薄弱"
+    ],
+    "risk_level": "high",
+    "caution_reason": "折返率 28% · 多段无信号 · 补给困难 · 专家级体能要求",
+    "key_checkpoint": "乱石坡底（无水/无信号）",
+    "season_fit": false,
+    "region": "广东 · 广东韶关",
+    "terrain_type": "密林 / 乱石坡 / 溪谷",
+    "ai_difficulty": {
+      "label": "专家",
+      "stars": 5,
+      "score": 7,
+      "basis": [
+        "爬升强度 9/10",
+        "路面难度 9/10",
+        "海拔风险 3/10",
+        "信号覆盖 2/10",
+        "补给可达 2/10"
+      ]
+    },
+    "overall_rating": 3.5,
+    "rating_count": 345,
+    "risk_markers": [
+      {
+        "id": "r5_w_0",
+        "type": "water",
+        "label": "水源点",
+        "progress": 0,
+        "note": "罗坑镇 可取水（建议过滤）"
+      },
+      {
+        "id": "r5_ns_1",
+        "type": "no_signal",
+        "label": "无信号区",
+        "progress": 0.3333333333333333,
+        "note": "乱石坡底 附近无可靠信号，请提前报备"
+      },
+      {
+        "id": "r5_ns_2",
+        "type": "no_signal",
+        "label": "无信号区",
+        "progress": 0.5555555555555556,
+        "note": "船底顶 附近无可靠信号，请提前报备"
+      },
+      {
+        "id": "r5_ns_3",
+        "type": "no_signal",
+        "label": "无信号区",
+        "progress": 0.7777777777777778,
+        "note": "望顶营地 附近无可靠信号，请提前报备"
+      },
+      {
+        "id": "r5_w_3",
+        "type": "water",
+        "label": "水源点",
+        "progress": 0.7777777777777778,
+        "note": "望顶营地 可取水（建议过滤）"
+      },
+      {
+        "id": "r5_w_4",
+        "type": "water",
+        "label": "水源点",
+        "progress": 1,
+        "note": "联和村 可取水（建议过滤）"
+      },
+      {
+        "id": "r5_steep",
+        "type": "steep",
+        "label": "陡坡",
+        "progress": 0.35,
+        "note": "约 420m 连续爬升段，建议登山杖"
+      },
+      {
+        "id": "r5_cliff",
+        "type": "cliff",
+        "label": "悬崖/险段",
+        "progress": 0.55,
+        "note": "临空或碎石险段，注意落脚与间距通过"
+      },
+      {
+        "id": "r5_steep2",
+        "type": "steep",
+        "label": "陡坡",
+        "progress": 0.72,
+        "note": "后半程陡坡，预留体力与折返窗口"
+      }
+    ],
+    "ai_safety_tips": [
+      {
+        "id": "t1",
+        "level": "danger",
+        "title": "乱石坡落石风险",
+        "body": "乱石坡段建议单人通过、保持间距；头盔在专家级路线中强烈建议。"
+      },
+      {
+        "id": "t2",
+        "level": "warn",
+        "title": "补给极差",
+        "body": "中段几乎无可靠水源，按全天无补给准备饮水与能量胶。"
+      }
+    ],
+    "guidebook": {
+      "safety_reviewed": true,
+      "reviewed_at": "2026-08-20",
+      "summary": "船底顶穿越结构化路书：按关键节点说明路况与补给，内容经安全审核后发布。",
+      "nodes": [
+        {
+          "name": "罗坑镇",
+          "distance_km": 0,
+          "condition": "补给与信号均可用",
+          "tip": "确认装备与紧急联系人"
+        },
+        {
+          "name": "乱石坡底",
+          "distance_km": 6,
+          "condition": "无可靠水源 · 无信号"
+        },
+        {
+          "name": "船底顶",
+          "distance_km": 10,
+          "condition": "无可靠水源 · 无信号"
+        },
+        {
+          "name": "望顶营地",
+          "distance_km": 14,
+          "condition": "无信号 · 可取水"
+        },
+        {
+          "name": "联和村",
+          "distance_km": 18,
+          "condition": "补给与信号均可用",
+          "tip": "抵达后报平安"
+        }
+      ],
+      "gear_suggestions": [
+        "防滑徒步鞋",
+        "登山杖",
+        "充电宝 / 离线地图",
+        "饮水 ≥ 3L",
+        "急救包与防晒",
+        "头盔（乱石坡强烈建议）"
+      ],
+      "condition_notes": [
+        "路况类型：密林 / 乱石坡 / 溪谷",
+        "最佳季节：秋、冬",
+        "完成率 65% · 折返率 28%",
+        "碎石/湿滑概率偏高，雨后谨慎通行"
+      ]
+    },
+    "elevation_profile": {
+      "points": [
+        {
+          "distance_km": 0,
+          "altitude_m": 566,
+          "label": "罗坑镇",
+          "is_peak": false,
+          "is_steep": false
+        },
+        {
+          "distance_km": 6,
+          "altitude_m": 1553,
+          "label": "乱石坡底",
+          "is_peak": true,
+          "is_steep": true
+        },
+        {
+          "distance_km": 10,
+          "altitude_m": 1586,
+          "label": "船底顶",
+          "is_peak": true,
+          "is_steep": false
+        },
+        {
+          "distance_km": 14,
+          "altitude_m": 1299,
+          "label": "望顶营地",
+          "is_peak": false,
+          "is_steep": false
+        },
+        {
+          "distance_km": 18,
+          "altitude_m": 566,
+          "label": "联和村",
+          "is_peak": false,
+          "is_steep": false
+        }
+      ],
+      "min_m": 566,
+      "max_m": 1586,
+      "total_ascent_m": 1200,
+      "steep_segments": [
+        {
+          "from_km": 0,
+          "to_km": 6,
+          "note": "爬升约 987m / 6.0km，建议登山杖"
+        }
+      ],
+      "accuracy_note": "剖面由关键节点与累计爬升推演生成，精度约 ±30–50m，仅供行前参考"
+    }
+  },
+  "r6": {
+    "id": "r6",
+    "name": "雨崩徒步",
+    "location": "云南德钦",
+    "province": "云南",
+    "distance": 30,
+    "elevation_gain": 1800,
+    "max_altitude": 3900,
+    "estimated_duration": "3-4天",
+    "difficulty": "hard",
+    "difficulty_stars": 4,
+    "best_season": [
+      "秋",
+      "冬"
+    ],
+    "image_url": "https://images.unsplash.com/photo-1519681393784-d120267933ba?w=800&q=80",
+    "real_photo_url": "https://images.unsplash.com/photo-1519681393784-d120267933ba?w=800&q=80",
+    "description": "梅里雪山脚下的世外桃源，需翻越南宗垭口方能抵达。冰川、瀑布、藏族村落，被誉为\"地球上最后一片世外桃源\"。",
+    "ratings": {
+      "climb_intensity": 7,
+      "terrain_difficulty": 6,
+      "altitude_risk": 6,
+      "signal_coverage": 2,
+      "supply_access": 3
+    },
+    "match_score": 55,
+    "completion_rate": 78,
+    "turnaround_rate": 18,
+    "monthly_stats": [
+      {
+        "month": "10月",
+        "completion": 85,
+        "incidents": 1
+      },
+      {
+        "month": "11月",
+        "completion": 80,
+        "incidents": 2
+      },
+      {
+        "month": "12月",
+        "completion": 75,
+        "incidents": 3
+      }
+    ],
+    "tags": [
+      "雪山",
+      "高海拔",
+      "藏族文化",
+      "秘境"
+    ],
+    "checkpoints": [
+      {
+        "name": "西当温泉",
+        "distance_km": 0,
+        "has_water": true,
+        "has_signal": true
+      },
+      {
+        "name": "南宗垭口",
+        "distance_km": 6,
+        "has_water": false,
+        "has_signal": false
+      },
+      {
+        "name": "上雨崩",
+        "distance_km": 10,
+        "has_water": true,
+        "has_signal": false
+      },
+      {
+        "name": "冰湖",
+        "distance_km": 18,
+        "has_water": true,
+        "has_signal": false
+      },
+      {
+        "name": "神瀑",
+        "distance_km": 24,
+        "has_water": true,
+        "has_signal": false
+      },
+      {
+        "name": "尼龙大峡谷",
+        "distance_km": 30,
+        "has_water": true,
+        "has_signal": true
+      }
+    ],
+    "decision_summary": "体能要求高，更适合秋/冬季",
+    "match_reasons": [
+      "匹配偏低，请谨慎选择",
+      "信号薄弱"
+    ],
+    "risk_level": "high",
+    "caution_reason": "折返率 18% · 海拔风险偏高 · 多段无信号 · 补给困难",
+    "key_checkpoint": "南宗垭口（无水/无信号）",
+    "season_fit": false,
+    "region": "云南 · 云南德钦",
+    "terrain_type": "垭口 / 高原牧场 / 冰川前缘",
+    "ai_difficulty": {
+      "label": "困难",
+      "stars": 4,
+      "score": 7,
+      "basis": [
+        "爬升强度 7/10",
+        "路面难度 6/10",
+        "海拔风险 6/10",
+        "信号覆盖 2/10",
+        "补给可达 3/10"
+      ]
+    },
+    "overall_rating": 3.5,
+    "rating_count": 318,
+    "risk_markers": [
+      {
+        "id": "r6_w_0",
+        "type": "water",
+        "label": "水源点",
+        "progress": 0,
+        "note": "西当温泉 可取水（建议过滤）"
+      },
+      {
+        "id": "r6_ns_1",
+        "type": "no_signal",
+        "label": "无信号区",
+        "progress": 0.2,
+        "note": "南宗垭口 附近无可靠信号，请提前报备"
+      },
+      {
+        "id": "r6_ns_2",
+        "type": "no_signal",
+        "label": "无信号区",
+        "progress": 0.3333333333333333,
+        "note": "上雨崩 附近无可靠信号，请提前报备"
+      },
+      {
+        "id": "r6_w_2",
+        "type": "water",
+        "label": "水源点",
+        "progress": 0.3333333333333333,
+        "note": "上雨崩 可取水（建议过滤）"
+      },
+      {
+        "id": "r6_ns_3",
+        "type": "no_signal",
+        "label": "无信号区",
+        "progress": 0.6,
+        "note": "冰湖 附近无可靠信号，请提前报备"
+      },
+      {
+        "id": "r6_w_3",
+        "type": "water",
+        "label": "水源点",
+        "progress": 0.6,
+        "note": "冰湖 可取水（建议过滤）"
+      },
+      {
+        "id": "r6_ns_4",
+        "type": "no_signal",
+        "label": "无信号区",
+        "progress": 0.8,
+        "note": "神瀑 附近无可靠信号，请提前报备"
+      },
+      {
+        "id": "r6_w_4",
+        "type": "water",
+        "label": "水源点",
+        "progress": 0.8,
+        "note": "神瀑 可取水（建议过滤）"
+      },
+      {
+        "id": "r6_w_5",
+        "type": "water",
+        "label": "水源点",
+        "progress": 1,
+        "note": "尼龙大峡谷 可取水（建议过滤）"
+      },
+      {
+        "id": "r6_steep",
+        "type": "steep",
+        "label": "陡坡",
+        "progress": 0.35,
+        "note": "约 630m 连续爬升段，建议登山杖"
+      }
+    ],
+    "ai_safety_tips": [
+      {
+        "id": "t1",
+        "level": "danger",
+        "title": "南宗垭口高反",
+        "body": "垭口海拔高、温差大，出现头痛/恶心应立即减速并考虑下撤，勿强行翻越。"
+      },
+      {
+        "id": "t2",
+        "level": "warn",
+        "title": "长距离无信号",
+        "body": "多日无可靠信号，卫星通讯或离线轨迹包建议携带。"
+      }
+    ],
+    "guidebook": {
+      "safety_reviewed": true,
+      "reviewed_at": "2026-08-20",
+      "summary": "雨崩徒步结构化路书：按关键节点说明路况与补给，内容经安全审核后发布。",
+      "nodes": [
+        {
+          "name": "西当温泉",
+          "distance_km": 0,
+          "condition": "补给与信号均可用",
+          "tip": "确认装备与紧急联系人"
+        },
+        {
+          "name": "南宗垭口",
+          "distance_km": 6,
+          "condition": "无可靠水源 · 无信号"
+        },
+        {
+          "name": "上雨崩",
+          "distance_km": 10,
+          "condition": "无信号 · 可取水"
+        },
+        {
+          "name": "冰湖",
+          "distance_km": 18,
+          "condition": "无信号 · 可取水"
+        },
+        {
+          "name": "神瀑",
+          "distance_km": 24,
+          "condition": "无信号 · 可取水"
+        },
+        {
+          "name": "尼龙大峡谷",
+          "distance_km": 30,
+          "condition": "补给与信号均可用",
+          "tip": "抵达后报平安"
+        }
+      ],
+      "gear_suggestions": [
+        "防滑徒步鞋",
+        "登山杖",
+        "充电宝 / 离线地图",
+        "饮水 ≥ 5L",
+        "急救包与防晒",
+        "保暖层 / 防风壳"
+      ],
+      "condition_notes": [
+        "路况类型：垭口 / 高原牧场 / 冰川前缘",
+        "最佳季节：秋、冬",
+        "完成率 78% · 折返率 18%",
+        "碎石/湿滑概率偏高，雨后谨慎通行"
+      ]
+    },
+    "elevation_profile": {
+      "points": [
+        {
+          "distance_km": 0,
+          "altitude_m": 2370,
+          "label": "西当温泉",
+          "is_peak": false,
+          "is_steep": false
+        },
+        {
+          "distance_km": 6,
+          "altitude_m": 3375,
+          "label": "南宗垭口",
+          "is_peak": false,
+          "is_steep": false
+        },
+        {
+          "distance_km": 10,
+          "altitude_m": 3851,
+          "label": "上雨崩",
+          "is_peak": true,
+          "is_steep": true
+        },
+        {
+          "distance_km": 18,
+          "altitude_m": 3900,
+          "label": "冰湖",
+          "is_peak": true,
+          "is_steep": false
+        },
+        {
+          "distance_km": 24,
+          "altitude_m": 3375,
+          "label": "神瀑",
+          "is_peak": false,
+          "is_steep": false
+        },
+        {
+          "distance_km": 30,
+          "altitude_m": 2370,
+          "label": "尼龙大峡谷",
+          "is_peak": false,
+          "is_steep": false
+        }
+      ],
+      "min_m": 2370,
+      "max_m": 3900,
+      "total_ascent_m": 1800,
+      "steep_segments": [
+        {
+          "from_km": 0,
+          "to_km": 6,
+          "note": "爬升约 1005m / 6.0km，建议登山杖"
+        }
+      ],
+      "accuracy_note": "剖面由关键节点与累计爬升推演生成，精度约 ±30–50m，仅供行前参考"
+    }
+  }
+}

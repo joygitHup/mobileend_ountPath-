@@ -20,6 +20,10 @@ import {
   KeyboardAwareFlatList,
   KeyboardAwareSectionList
 } from 'react-native-keyboard-aware-scroll-view';
+import {
+  resolveSeasonBackground,
+  useSeasonTheme,
+} from '@/contexts/SeasonThemeContext';
 
 /**
  * # Screen 组件使用指南
@@ -115,22 +119,25 @@ const KeyboardAwareScrollable = ({
     ...(Platform.OS === 'ios'
       ? { contentInsetAdjustmentBehavior: childAttrs['contentInsetAdjustmentBehavior'] ?? contentInsetBehaviorIOS }
       : {}),
-  };
+  } as Record<string, unknown>;
 
   const t = (element as React.ReactElement).type;
 
   // 根据组件类型返回对应的 KeyboardAware 版本
   // 注意：不再使用 KeyboardAvoidingView，直接替换为增强版 ScrollView
   if (t === ScrollView) {
-    return <KeyboardAwareScrollView {...commonProps} />;
+    // eslint-disable-next-line @typescript-eslint/no-explicit-any
+    return <KeyboardAwareScrollView {...(commonProps as any)} />;
   }
 
   if (t === FlatList) {
-    return <KeyboardAwareFlatList {...commonProps} />;
+    // eslint-disable-next-line @typescript-eslint/no-explicit-any
+    return <KeyboardAwareFlatList {...(commonProps as any)} />;
   }
 
   if (t === SectionList) {
-    return <KeyboardAwareSectionList {...commonProps} />;
+    // eslint-disable-next-line @typescript-eslint/no-explicit-any
+    return <KeyboardAwareSectionList {...(commonProps as any)} />;
   }
 
   // 理论上不应运行到这里，如果是非标准组件则原样返回，仅修改样式
@@ -143,13 +150,15 @@ const KeyboardAwareScrollable = ({
 
 const RawScreen = ({
   children,
-  backgroundColor = 'var(--background)',
+  backgroundColor,
   statusBarStyle = 'dark',
   statusBarColor = 'transparent',
   safeAreaEdges = ['top', 'left', 'right', 'bottom'],
   style,
 }: ScreenProps) => {
   const insets = useSafeAreaInsets();
+  const { palette } = useSeasonTheme();
+  const resolvedBackground = resolveSeasonBackground(backgroundColor, palette.background);
   const [keyboardShown, setKeyboardShown] = React.useState(false);
 
   useEffect(() => {
@@ -200,7 +209,7 @@ const RawScreen = ({
 
   const wrapperStyle: ViewStyle = {
     flex: 1,
-    backgroundColor,
+    backgroundColor: resolvedBackground,
     paddingTop: hasTop ? insets.top : 0,
     paddingLeft: hasLeft ? insets.left : 0,
     paddingRight: hasRight ? insets.right : 0,

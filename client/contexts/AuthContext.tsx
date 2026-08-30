@@ -1,18 +1,27 @@
-// @ts-nocheck
-/**
- * 通用认证上下文
- *
- * 基于固定的 API 接口实现，可复用到其他项目
- * 其他项目使用时，只需修改 @api 的导入路径指向项目的 api 模块
- *
- * 注意：
- * - 如果需要登录/鉴权场景，请扩展本文件，完善 login/logout、token 管理、用户信息获取与刷新等逻辑
- * - 将示例中的占位实现替换为项目实际的接口调用与状态管理
- */
-import React, { createContext, useContext, ReactNode } from "react";
+import AsyncStorage from '@react-native-async-storage/async-storage';
+import React, {
+  createContext,
+  useCallback,
+  useContext,
+  useEffect,
+  useMemo,
+  useState,
+  type ReactNode,
+} from 'react';
+import { setAuthInvalidHandler } from '@/utils/api';
+import {
+  AUTH_TOKEN_KEY,
+  AUTH_USER_KEY,
+  clearStoredAuth,
+  getStoredToken as readStoredToken,
+} from '@/utils/authStorage';
+import { stopGuardHeartbeat } from '@/utils/guardHeartbeat';
 
-interface UserOut {
-
+export interface UserOut {
+  id: string;
+  name: string;
+  phone?: string;
+  avatar_url?: string;
 }
 
 interface AuthContextType {
@@ -20,7 +29,7 @@ interface AuthContextType {
   token: string | null;
   isAuthenticated: boolean;
   isLoading: boolean;
-  login: (token: string) => Promise<void>;
+  login: (token: string, user?: UserOut) => Promise<void>;
   logout: () => Promise<void>;
   updateUser: (userData: Partial<UserOut>) => void;
 }
@@ -28,28 +37,101 @@ interface AuthContextType {
 const AuthContext = createContext<AuthContextType | undefined>(undefined);
 
 export const AuthProvider: React.FC<{ children: ReactNode }> = ({ children }) => {
-  const value: AuthContextType = {
-    user: null,
-    token: null,
-    isAuthenticated: false,
-    isLoading: false,
+  const [user, setUser] = useState<UserOut | null>(null);
+  const [token, setToken] = useState<string | null>(null);
+  const [isLoading, setIsLoading] = useState(true);
 
-    // 登录逻辑，根据项目实际情况实现
-    login: async (token: string) => {}, // eslint-disable-line @typescript-eslint/no-empty-function
+  const logout = useCallback(async () => {
+    stopGuardHeartbeat();
+    setToken(null);
+    setUser(null);
+    await clearStoredAuth();
+  }, []);
 
-    // 登出逻辑，根据项目实际情况实现
-    logout: async () => {}, // eslint-disable-line @typescript-eslint/no-empty-function
+  useEffect(() => {
+    setAuthInvalidHandler(() => {
+      stopGuardHeartbeat();
+      setToken(null);
+      setUser(null);
+    });
+    return () => setAuthInvalidHandler(null);
+  }, []);
 
-    // 更新用户信息，根据项目实际情况实现
-    updateUser: () => {}, // eslint-disable-line @typescript-eslint/no-empty-function
-  };
+  useEffect(() => {
+    let cancelled = false;
+    (async () => {
+      try {
+        const [t, u] = await Promise.all([
+          AsyncStorage.getItem(AUTH_TOKEN_KEY),
+          AsyncStorage.getItem(AUTH_USER_KEY),
+        ]);
+        if (cancelled) return;
+        if (t && u) {
+          try {
+            setToken(t);
+            setUser(JSON.parse(u) as UserOut);
+          } catch {
+            setToken(null);
+            setUser(null);
+            await clearStoredAuth();
+          }
+        } else if (t || u) {
+          setToken(null);
+          setUser(null);
+          await clearStoredAuth();
+        }
+      } finally {
+        if (!cancelled) setIsLoading(false);
+      }
+    })();
+    return () => {
+      cancelled = true;
+    };
+  }, []);
+
+  const login = useCallback(async (nextToken: string, nextUser?: UserOut) => {
+    if (!nextUser?.id) {
+      throw new Error('登录缺少用户信息');
+    }
+    setToken(nextToken);
+    setUser(nextUser);
+    await AsyncStorage.setItem(AUTH_TOKEN_KEY, nextToken);
+    await AsyncStorage.setItem(AUTH_USER_KEY, JSON.stringify(nextUser));
+  }, []);
+
+  const updateUser = useCallback((userData: Partial<UserOut>) => {
+    setUser((prev) => {
+      if (!prev) return null;
+      const next = { ...prev, ...userData };
+      void AsyncStorage.setItem(AUTH_USER_KEY, JSON.stringify(next));
+      return next;
+    });
+  }, []);
+
+  const value = useMemo<AuthContextType>(
+    () => ({
+      user,
+      token,
+      isAuthenticated: !!token && !!user,
+      isLoading,
+      login,
+      logout,
+      updateUser,
+    }),
+    [user, token, isLoading, login, logout, updateUser]
+  );
+
   return <AuthContext.Provider value={value}>{children}</AuthContext.Provider>;
 };
 
 export const useAuth = (): AuthContextType => {
   const context = useContext(AuthContext);
   if (context === undefined) {
-    throw new Error("useAuth must be used within an AuthProvider");
+    throw new Error('useAuth must be used within an AuthProvider');
   }
   return context;
 };
+
+export async function getStoredToken(): Promise<string | null> {
+  return readStoredToken();
+}
