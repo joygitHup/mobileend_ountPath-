@@ -1,5 +1,5 @@
 import { useState } from 'react';
-import { View, StyleSheet, LogBox } from 'react-native';
+import { View, StyleSheet, LogBox, ActivityIndicator } from 'react-native';
 import { Stack } from 'expo-router';
 import Toast from 'react-native-toast-message';
 import { Provider } from '@/components/Provider';
@@ -14,17 +14,25 @@ LogBox.ignoreLogs([
 ]);
 
 /**
- * 启动流程：鉴权恢复 + 启动页都结束后再分流登录 / 主应用
- * 避免未等 isLoading 先闪登录再进主页
+ * 启动流程：启动页结束后再等鉴权恢复，再分流登录 / 主应用。
+ * 注意：Splash 结束时会淡出到 opacity:0，不可在 isLoading 阶段继续挂载已淡出的 Splash，否则会整页空白。
  */
 function AppEntry() {
   const { isAuthenticated, isLoading } = useAuth();
   const [splashDone, setSplashDone] = useState(false);
 
-  if (isLoading || !splashDone) {
+  if (!splashDone) {
     return (
       <View style={styles.fill}>
         <SplashScreenView onFinish={() => setSplashDone(true)} />
+      </View>
+    );
+  }
+
+  if (isLoading) {
+    return (
+      <View style={styles.bootLoading}>
+        <ActivityIndicator size="large" color="#2D6A4F" />
       </View>
     );
   }
@@ -82,5 +90,11 @@ const styles = StyleSheet.create({
   },
   fill: {
     flex: 1,
+  },
+  bootLoading: {
+    flex: 1,
+    alignItems: 'center',
+    justifyContent: 'center',
+    backgroundColor: '#FDF8F0',
   },
 });

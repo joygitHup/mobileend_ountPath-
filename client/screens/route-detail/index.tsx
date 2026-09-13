@@ -727,7 +727,7 @@ export default function RouteDetailScreen() {
         return;
       }
       if (!current.track_access?.allowed) {
-        notifyInfo('需先完成安全闸门', '请在行程页开启守护或签署免责协议');
+        notifyInfo('需先开启行中守护', '示意跟线不能仅靠免责签署进入，请到行程页开启守护');
         router.push('/(tabs)/trip');
         return;
       }
@@ -745,7 +745,7 @@ export default function RouteDetailScreen() {
   const openTrackVariant = (trackId: string) => {
     confirmDialog(
       '进入示意跟线',
-      '将使用该轨迹做示意步行。需与行程页同一规则：已开守护或已签免责。',
+      '将使用该轨迹做示意步行（非精确导航）。须已开启行中守护。',
       {
         confirmText: '继续',
         onConfirm: () => void enterTrackIfAllowed(trackId),
@@ -758,7 +758,7 @@ export default function RouteDetailScreen() {
       route.track_info?.recommended_id || route.track_info?.official_id || undefined;
     confirmDialog(
       '进入示意跟线',
-      '示意跟线需与行程页同一规则：已开启行中守护，或已签署免责协议。未满足将跳转行程页完成闸门。',
+      '示意跟线需先开启行中守护。未满足将跳转行程页。',
       {
         confirmText: '继续',
         onConfirm: () => void enterTrackIfAllowed(recommended),
@@ -1181,7 +1181,7 @@ export default function RouteDetailScreen() {
         {/* AI 难度说明 */}
         <Card>
           <View className="flex-row items-center justify-between mb-3">
-            <Text className="text-lg font-bold text-foreground">AI 综合难度</Text>
+            <Text className="text-lg font-bold text-foreground">五维难度摘要</Text>
             <View className="px-3 py-1 rounded-full" style={{ backgroundColor: 'rgba(45,106,79,0.1)' }}>
               <Text className="text-xs font-bold" style={{ color: '#2D6A4F' }}>
                 {ai?.label} · {ai?.score}/10
@@ -1189,7 +1189,7 @@ export default function RouteDetailScreen() {
             </View>
           </View>
           <Text className="text-xs text-muted mb-3" style={{ lineHeight: 18 }}>
-            由爬升、路面、海拔、信号、补给五维综合评定，非单一体能指标。
+            由爬升、路面、海拔、信号、补给五维规则综合，属示意评级，非个性化 AI 结论，也不能作为出行许可。
           </Text>
           <View className="flex-row flex-wrap gap-2">
             {(ai?.basis ?? []).map((b) => (
@@ -1375,7 +1375,7 @@ export default function RouteDetailScreen() {
             <Text className="text-lg font-bold text-foreground">五维评测</Text>
             <View className="px-4 py-2 rounded-2xl" style={{ backgroundColor: `${matchColor}15` }}>
               <Text className="text-sm font-bold" style={{ color: matchColor }}>
-                匹配度 {route.match_score}%
+                契合度示意 {route.match_score}%
               </Text>
               <Text className="text-xs mt-0.5" style={{ color: matchColor }}>
                 {getMatchLabel(route.match_score)}

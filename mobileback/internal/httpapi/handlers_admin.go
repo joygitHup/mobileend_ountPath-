@@ -2,6 +2,7 @@ package httpapi
 
 import (
 	"encoding/json"
+	"strconv"
 	"strings"
 	"time"
 
@@ -51,10 +52,19 @@ func (s *Server) adminDashboardSummary(c *gin.Context) {
 	s.DB.Model(&db.Leader{}).Count(&leaders)
 	s.DB.Model(&db.ToolItem{}).Count(&tools)
 	s.DB.Model(&db.User{}).Count(&users)
-	s.DB.Model(&db.GuardSession{}).Where("status = ?", "active").Count(&activeGuards)
+	s.DB.Model(&db.GuardSession{}).Where("status IN ?", []string{"active", "sos"}).Count(&activeGuards)
 
-	var sosUsers int64
-	s.DB.Model(&db.SafetySettings{}).Where("last_sos_json <> '' AND last_sos_json IS NOT NULL").Count(&sosUsers)
+	var sosSettings []db.SafetySettings
+	s.DB.Where("last_sos_json <> '' AND last_sos_json IS NOT NULL").Find(&sosSettings)
+	var sosOpen int64
+	for _, st := range sosSettings {
+		var sos map[string]any
+		_ = json.Unmarshal([]byte(st.LastSosJSON), &sos)
+		status, _ := sos["status"].(string)
+		if status != "resolved" && status != "closed" {
+			sosOpen++
+		}
+	}
 
 	var tripsPlanned, tripsActive, tripsCompleted int64
 	s.DB.Model(&db.Trip{}).Where("status = ?", "planned").Count(&tripsPlanned)
@@ -64,7 +74,7 @@ func (s *Server) adminDashboardSummary(c *gin.Context) {
 	c.JSON(200, gin.H{"data": gin.H{
 		"routes": routes, "posts": posts, "hidden_posts": hiddenPosts,
 		"leaders": leaders, "tools": tools, "users": users,
-		"active_guards": activeGuards, "sos_records": sosUsers,
+		"active_guards": activeGuards, "sos_records": sosOpen,
 		"trips_planned": tripsPlanned, "trips_active": tripsActive, "trips_completed": tripsCompleted,
 	}})
 }
@@ -523,10 +533,11 @@ func (s *Server) adminPostPatch(c *gin.Context) {
 		return
 	}
 	var body struct {
-		Hidden *bool          `json:"hidden"`
-		IsPaid *bool          `json:"is_paid"`
-		Price  *float64       `json:"price"`
-		Patch  map[string]any `json:"payload"`
+		Hidden   *bool          `json:"hidden"`
+		IsPaid   *bool          `json:"is_paid"`
+		Price    *float64       `json:"price"`
+		Answered *bool          `json:"answered"`
+		Patch    map[string]any `json:"payload"`
 	}
 	if err := c.BindJSON(&body); err != nil {
 		c.JSON(400, gin.H{"error": "参数无效"})
@@ -545,6 +556,9 @@ func (s *Server) adminPostPatch(c *gin.Context) {
 	}
 	if body.Price != nil {
 		m["price"] = *body.Price
+	}
+	if body.Answered != nil {
+		m["answered"] = *body.Answered
 	}
 	for k, v := range body.Patch {
 		m[k] = v
@@ -658,7 +672,17 @@ func (s *Server) adminUserPatch(c *gin.Context) {
 		user.SafetyScore = *body.SafetyScore
 	}
 	if body.Role != nil {
-		user.Role = *body.Role
+		actorRole, _ := c.Get("role")
+		if actorRole != "admin" {
+			c.JSON(403, gin.H{"error": "仅管理员可变更角色"})
+			return
+		}
+		role := strings.TrimSpace(*body.Role)
+		if role != "user" && role != "ops" && role != "admin" {
+			c.JSON(400, gin.H{"error": "角色无效"})
+			return
+		}
+		user.Role = role
 	}
 	if body.Banned != nil {
 		user.Banned = *body.Banned
@@ -678,7 +702,12 @@ func (s *Server) adminGuardSessions(c *gin.Context) {
 	status := c.Query("status")
 	var rows []db.GuardSession
 	tx := s.DB.Order("started_at desc").Limit(100)
-	if status != "" {
+	switch status {
+	case "open":
+		tx = tx.Where("status IN ?", []string{"active", "sos"})
+	case "":
+		// all
+	default:
 		tx = tx.Where("status = ?", status)
 	}
 	tx.Find(&rows)
@@ -688,11 +717,30 @@ func (s *Server) adminGuardSessions(c *gin.Context) {
 		_ = json.Unmarshal([]byte(g.LastLocationJSON), &loc)
 		var guardians any
 		_ = json.Unmarshal([]byte(g.GuardiansJSON), &guardians)
+		var user db.User
+		_ = s.DB.First(&user, "id = ?", g.UserID)
+		routeName := g.RouteID
+		if g.RouteID != "" {
+			var route db.Route
+			if s.DB.First(&route, "id = ?", g.RouteID).Error == nil {
+				routeName = route.Name
+			}
+		}
+		overtime := false
+		if g.Status == "active" || g.Status == "sos" {
+			limit := time.Duration(g.PlannedDurationHours) * time.Hour
+			if limit <= 0 {
+				limit = 8 * time.Hour
+			}
+			overtime = time.Since(g.StartedAt) > limit
+		}
 		out = append(out, gin.H{
-			"id": g.ID, "user_id": g.UserID, "route_id": g.RouteID, "trip_id": g.TripID,
+			"id": g.ID, "user_id": g.UserID, "user_name": user.Name, "phone": user.Phone,
+			"route_id": g.RouteID, "route_name": routeName, "trip_id": g.TripID,
 			"status": g.Status, "started_at": g.StartedAt,
 			"planned_duration_hours": g.PlannedDurationHours,
 			"last_location": loc, "guardians": guardians,
+			"overtime": overtime,
 			"overtime_notified_at": g.OvertimeNotifiedAt,
 		})
 	}
@@ -714,25 +762,158 @@ func (s *Server) adminGuardSessionPatch(c *gin.Context) {
 		c.JSON(400, gin.H{"error": "参数无效"})
 		return
 	}
+	wasSos := row.Status == "sos"
 	if body.Status != "" {
+		// 兼容旧前端 stopped
+		if body.Status == "stopped" {
+			body.Status = "completed"
+		}
 		row.Status = body.Status
 	}
 	_ = s.DB.Save(&row).Error
+	if wasSos || row.Status == "completed" {
+		s.resolveLatestSos(row.UserID, "ops_guard:"+strings.TrimSpace(body.Note))
+	}
+	if row.TripID != nil && (row.Status == "completed") {
+		s.DB.Model(&db.Trip{}).Where("id = ? AND user_id = ?", *row.TripID, row.UserID).Updates(map[string]any{
+			"status": "planned", "guard_session_id": nil,
+		})
+	}
 	s.adminAudit(c, "patch_guard", "guard", id, body.Note)
 	c.JSON(200, gin.H{"data": gin.H{"ok": true}})
 }
 
 func (s *Server) adminSosList(c *gin.Context) {
+	onlyOpen := c.Query("open") != "0"
 	var rows []db.SafetySettings
 	s.DB.Where("last_sos_json <> '' AND last_sos_json IS NOT NULL").Find(&rows)
 	out := make([]gin.H, 0, len(rows))
 	for _, r := range rows {
-		var sos any
+		var sos map[string]any
 		_ = json.Unmarshal([]byte(r.LastSosJSON), &sos)
+		if sos == nil {
+			sos = map[string]any{}
+		}
+		status, _ := sos["status"].(string)
+		if status == "" {
+			status = "recorded"
+			sos["status"] = status
+		}
+		if onlyOpen && (status == "resolved" || status == "closed") {
+			continue
+		}
 		var user db.User
 		_ = s.DB.First(&user, "id = ?", r.UserID)
 		out = append(out, gin.H{
-			"user_id": r.UserID, "user_name": user.Name, "phone": user.Phone, "sos": sos,
+			"user_id": r.UserID, "user_name": user.Name, "phone": user.Phone,
+			"status": status, "sos": sos,
+		})
+	}
+	c.JSON(200, gin.H{"data": out})
+}
+
+func (s *Server) adminSosResolve(c *gin.Context) {
+	userID := c.Param("userId")
+	var body struct {
+		Note string `json:"note"`
+	}
+	_ = c.BindJSON(&body)
+	var user db.User
+	if err := s.DB.First(&user, "id = ?", userID).Error; err != nil {
+		c.JSON(404, gin.H{"error": "用户不存在"})
+		return
+	}
+	s.DB.Model(&db.GuardSession{}).Where("user_id = ? AND status IN ?", userID, []string{"active", "sos"}).
+		Update("status", "completed")
+	s.DB.Model(&db.Trip{}).Where("user_id = ? AND status = ?", userID, "active").Updates(map[string]any{
+		"status": "planned", "guard_session_id": nil,
+	})
+	reason := "ops_resolved"
+	if strings.TrimSpace(body.Note) != "" {
+		reason = reason + ":" + strings.TrimSpace(body.Note)
+	}
+	s.resolveLatestSos(userID, reason)
+	s.adminAudit(c, "resolve_sos", "sos", userID, body.Note)
+	c.JSON(200, gin.H{"data": gin.H{"ok": true}})
+}
+
+func (s *Server) adminTripsList(c *gin.Context) {
+	status := c.Query("status")
+	var rows []db.Trip
+	tx := s.DB.Order("updated_at desc").Limit(200)
+	if status != "" {
+		tx = tx.Where("status = ?", status)
+	}
+	tx.Find(&rows)
+	out := make([]gin.H, 0, len(rows))
+	for _, t := range rows {
+		var user db.User
+		_ = s.DB.First(&user, "id = ?", t.UserID)
+		routeName := t.RouteID
+		var route db.Route
+		if s.DB.First(&route, "id = ?", t.RouteID).Error == nil {
+			routeName = route.Name
+		}
+		out = append(out, gin.H{
+			"id": t.ID, "user_id": t.UserID, "user_name": user.Name, "phone": user.Phone,
+			"route_id": t.RouteID, "route_name": routeName, "status": t.Status,
+			"departure_at": t.DepartureAt, "guard_session_id": t.GuardSessionID,
+			"planned_duration_hours": t.PlannedDurationHours,
+			"updated_at": t.UpdatedAt,
+		})
+	}
+	c.JSON(200, gin.H{"data": out})
+}
+
+func (s *Server) adminTripForceEnd(c *gin.Context) {
+	id := c.Param("id")
+	var body struct {
+		Abandoned bool   `json:"abandoned"`
+		Note      string `json:"note"`
+	}
+	_ = c.BindJSON(&body)
+	var trip db.Trip
+	if err := s.DB.First(&trip, "id = ?", id).Error; err != nil {
+		c.JSON(404, gin.H{"error": "行程不存在"})
+		return
+	}
+	uid := trip.UserID
+	s.DB.Model(&db.GuardSession{}).Where("user_id = ? AND status IN ?", uid, []string{"active", "sos"}).
+		Update("status", "completed")
+	s.resolveLatestSos(uid, "ops_trip_force_end")
+	if body.Abandoned {
+		s.DB.Delete(&trip)
+	} else {
+		now := time.Now()
+		s.recordOutingComplete(uid, trip.RouteID, &now, "")
+		s.DB.Delete(&trip)
+	}
+	s.adminAudit(c, "force_end_trip", "trip", id, body.Note)
+	c.JSON(200, gin.H{"data": gin.H{"ok": true, "abandoned": body.Abandoned}})
+}
+
+func (s *Server) adminCompanionInterests(c *gin.Context) {
+	var rows []db.CompanionInterest
+	s.DB.Order("created_at desc").Limit(200).Find(&rows)
+	out := make([]gin.H, 0, len(rows))
+	for _, row := range rows {
+		var post db.Post
+		_ = s.DB.First(&post, "id = ?", row.PostID)
+		var payload map[string]any
+		_ = json.Unmarshal([]byte(post.Payload), &payload)
+		title := str(payload["title"])
+		if title == "" {
+			title = post.ID
+		}
+		var joiner db.User
+		_ = s.DB.First(&joiner, "id = ?", row.UserID)
+		var owner db.User
+		_ = s.DB.First(&owner, "id = ?", post.UserID)
+		out = append(out, gin.H{
+			"post_id": row.PostID, "post_title": title, "post_owner": owner.Name,
+			"user_id": row.UserID, "user_name": joiner.Name, "phone": joiner.Phone,
+			"note": row.Note, "created_at": row.CreatedAt,
+			"route_id": str(payload["route_id"]), "route_name": str(payload["route_name"]),
 		})
 	}
 	c.JSON(200, gin.H{"data": out})
@@ -841,7 +1022,42 @@ func (s *Server) adminSignalsPut(c *gin.Context) {
 }
 
 func (s *Server) adminAuditList(c *gin.Context) {
+	action := strings.TrimSpace(c.Query("action"))
+	resource := strings.TrimSpace(c.Query("resource"))
+	actor := strings.TrimSpace(c.Query("actor"))
+	q := strings.TrimSpace(c.Query("q"))
+	page := 1
+	limit := 50
+	if v := c.Query("page"); v != "" {
+		if n, err := strconv.Atoi(v); err == nil && n > 0 {
+			page = n
+		}
+	}
+	if v := c.Query("limit"); v != "" {
+		if n, err := strconv.Atoi(v); err == nil && n > 0 && n <= 200 {
+			limit = n
+		}
+	}
+	tx := s.DB.Model(&db.AdminAuditLog{})
+	if action != "" {
+		tx = tx.Where("action = ?", action)
+	}
+	if resource != "" {
+		tx = tx.Where("resource = ?", resource)
+	}
+	if actor != "" {
+		like := "%" + actor + "%"
+		tx = tx.Where("actor_phone LIKE ? OR actor_id LIKE ?", like, like)
+	}
+	if q != "" {
+		like := "%" + q + "%"
+		tx = tx.Where("detail LIKE ? OR resource_id LIKE ? OR action LIKE ?", like, like, like)
+	}
+	var total int64
+	tx.Count(&total)
 	var rows []db.AdminAuditLog
-	s.DB.Order("created_at desc").Limit(100).Find(&rows)
-	c.JSON(200, gin.H{"data": rows})
+	tx.Order("created_at desc").Offset((page - 1) * limit).Limit(limit).Find(&rows)
+	c.JSON(200, gin.H{"data": gin.H{
+		"items": rows, "total": total, "page": page, "limit": limit,
+	}})
 }

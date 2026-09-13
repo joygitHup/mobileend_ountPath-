@@ -1,4 +1,4 @@
-const API_BASE = (import.meta.env.VITE_API_BASE as string) || 'http://127.0.0.1:9092';
+const API_BASE = (import.meta.env.VITE_API_BASE as string) ?? '';
 
 const TOKEN_KEY = 'mountpath_admin_token';
 const USER_KEY = 'mountpath_admin_user';
@@ -47,6 +47,13 @@ export class ApiError extends Error {
   }
 }
 
+let onUnauthorized: (() => void) | null = null;
+
+/** 注册 401 回调（AuthProvider 里清会话并跳登录） */
+export function setUnauthorizedHandler(fn: (() => void) | null) {
+  onUnauthorized = fn;
+}
+
 export async function api<T = unknown>(
   path: string,
   options: RequestInit & { auth?: boolean } = {},
@@ -63,6 +70,10 @@ export async function api<T = unknown>(
   const res = await fetch(`${API_BASE}${path}`, { ...rest, headers: h });
   const json = await res.json().catch(() => ({}));
   if (!res.ok) {
+    if (res.status === 401 && auth) {
+      clearSession();
+      onUnauthorized?.();
+    }
     throw new ApiError(res.status, (json as { error?: string }).error || res.statusText);
   }
   return ((json as { data?: T }).data !== undefined ? (json as { data: T }).data : json) as T;
@@ -79,4 +90,8 @@ export async function login(phone: string, code: string) {
   }
   setSession(data.token, data.user);
   return data;
+}
+
+export async function fetchAdminMe() {
+  return api<AdminUser>('/api/v1/admin/me');
 }

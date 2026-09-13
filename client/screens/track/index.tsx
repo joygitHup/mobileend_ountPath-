@@ -21,6 +21,7 @@ import { confirmDialog, notifyError, notifyInfo, notifySuccess } from '@/utils/n
 import { alertOffTrack } from '@/utils/offTrackAlert';
 import { getBestPosition, postGuardCheckin } from '@/utils/location';
 import { buildSchematicTrail, projectOntoTrail, type LatLng } from '@/utils/trackGeo';
+import { startGuardHeartbeat, stopGuardHeartbeat } from '@/utils/guardHeartbeat';
 
 type RiskType = 'steep' | 'cliff' | 'no_signal' | 'water';
 type AnnotationKind = 'note' | 'hazard' | 'water' | 'viewpoint' | 'rest' | 'photo';
@@ -262,10 +263,29 @@ export default function TrackScreen() {
   const trailRef = useRef<LatLng[]>([]);
   const lastOffTrackVoiceAt = useRef(0);
   const lastOffTrackLevel = useRef<'ok' | 'warn' | 'danger'>('ok');
+  const finishPromptedRef = useRef(false);
 
   useEffect(() => {
     trailRef.current = trail;
   }, [trail]);
+
+  const closeWalkSession = useCallback(async () => {
+    const wid = walkSessionRef.current;
+    if (!wid) return;
+    walkSessionRef.current = null;
+    try {
+      await fetchApi('/api/v1/track/end', {
+        method: 'POST',
+        body: JSON.stringify({
+          walk_session_id: wid,
+          progress: progressRef.current,
+          route_id: params.routeId,
+        }),
+      });
+    } catch {
+      // leave best-effort
+    }
+  }, [params.routeId]);
 
   const syncProgress = useCallback(async (progress: number, offsetM?: number) => {
     if (!params.routeId) return;
@@ -311,14 +331,66 @@ export default function TrackScreen() {
         }
       }
 
-      if (progress >= 0.995) {
+      if (progress >= 0.995 && !finishPromptedRef.current) {
+        finishPromptedRef.current = true;
         setWalking(false);
-        notifySuccess('到达终点', '本段示意步行已完成，记得向守护人报平安。');
+        const endedWalkId = walkSessionRef.current;
+        confirmDialog(
+          '示意跟线已完成',
+          '本段示意步行已到终点。「仅结束跟线」不会关闭行中守护与行程；守护仍会继续前台上报，请记得回守护页或行程页收口。',
+          {
+            confirmText: '完结行程并结束守护',
+            cancelText: '仅结束跟线',
+            onConfirm: () => {
+              void (async () => {
+                try {
+                  await closeWalkSession();
+                  if (params.tripId) {
+                    await fetchApi(`/api/v1/trips/${params.tripId}/complete`, {
+                      method: 'POST',
+                      body: JSON.stringify({
+                        abandoned: false,
+                        walk_session_id: endedWalkId,
+                      }),
+                    });
+                  }
+                  stopGuardHeartbeat();
+                  notifySuccess('行程已完结', '守护已结束，里程已按本次跟线进度计入统计');
+                  router.replace('/(tabs)/trip');
+                } catch (e) {
+                  finishPromptedRef.current = false;
+                  notifyError(
+                    '完结失败',
+                    e instanceof Error ? e.message : '可到行程页手动结束'
+                  );
+                }
+              })();
+            },
+            onCancel: () => {
+              void (async () => {
+                await closeWalkSession();
+                confirmDialog(
+                  '跟线已结束，守护仍可能开启',
+                  '示意跟线草稿已收口。若行中守护仍在上报，请前往守护页结束，或到行程中心完结行程。',
+                  {
+                    confirmText: '去守护页',
+                    cancelText: '知道了',
+                    onConfirm: () =>
+                      router.push('/guard', {
+                        routeId: params.routeId || '',
+                        tripId: params.tripId,
+                      }),
+                  }
+                );
+              })();
+            },
+          }
+        );
       }
     } catch {
       // keep last state
     }
-  }, [params.routeId]);
+  }, [params.routeId, params.tripId, router, closeWalkSession]);
 
   const bootstrap = useCallback(async () => {
     if (!params.routeId) {
@@ -357,10 +429,18 @@ export default function TrackScreen() {
       offsetRef.current = 0;
       sessionRef.current = res.data.guard_session?.id ?? null;
       setSessionId(res.data.guard_session?.id ?? null);
+      if (res.data.guard_session?.id) {
+        startGuardHeartbeat({
+          id: res.data.guard_session.id,
+          started_at: new Date().toISOString(),
+          planned_duration_hours: 8,
+        });
+      }
       walkSessionRef.current = res.data.walk_session_id;
       setWalkSessionId(res.data.walk_session_id);
       trackIdRef.current = res.data.track_id;
       setTrackId(res.data.track_id);
+      finishPromptedRef.current = (res.data.walk.progress || 0) >= 0.995;
       const t = res.data.trail;
       if (t) {
         const points = buildSchematicTrail(
@@ -391,8 +471,9 @@ export default function TrackScreen() {
       return () => {
         if (timerRef.current) clearInterval(timerRef.current);
         setWalking(false);
+        void closeWalkSession();
       };
-    }, [bootstrap])
+    }, [bootstrap, closeWalkSession])
   );
 
   useEffect(() => {
@@ -620,7 +701,28 @@ export default function TrackScreen() {
         <TouchableOpacity
           onPress={() => {
             setWalking(false);
-            router.back();
+            void (async () => {
+              const hadGuard = !!sessionRef.current;
+              await closeWalkSession();
+              if (hadGuard) {
+                confirmDialog(
+                  '跟线已退出',
+                  '示意跟线已收口，但行中守护与行程可能仍在进行。是否前往守护页收口？',
+                  {
+                    confirmText: '去守护页',
+                    cancelText: '先返回',
+                    onConfirm: () =>
+                      router.push('/guard', {
+                        routeId: params.routeId || '',
+                        tripId: params.tripId,
+                      }),
+                    onCancel: () => router.back(),
+                  }
+                );
+              } else {
+                router.back();
+              }
+            })();
           }}
           className="w-10 h-10 items-center justify-center"
         >

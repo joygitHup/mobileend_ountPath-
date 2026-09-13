@@ -116,6 +116,7 @@ export default function TripScreen() {
   const router = useSafeRouter();
   const [board, setBoard] = useState<TripBoard | null>(null);
   const [loading, setLoading] = useState(true);
+  const [loadError, setLoadError] = useState<string | null>(null);
   const [gateVisible, setGateVisible] = useState(false);
   const [agreed, setAgreed] = useState(false);
   const [signing, setSigning] = useState(false);
@@ -124,6 +125,7 @@ export default function TripScreen() {
   const loadBoard = useCallback(async () => {
     try {
       setLoading(true);
+      setLoadError(null);
       const res = await fetchApi<{ data: TripBoard }>('/api/v1/trips/board');
       setBoard(res.data);
       const cur = res.data?.current;
@@ -153,6 +155,7 @@ export default function TripScreen() {
         }
         await syncDepartureRemind({
           tripId: cur.id,
+          routeId: cur.route_id,
           routeName: cur.route_name || '',
           departureAt: cur.departure_at,
           hoursBefore: hours,
@@ -164,8 +167,9 @@ export default function TripScreen() {
       } else {
         await syncDepartureRemind(null);
       }
-    } catch {
+    } catch (e) {
       setBoard(null);
+      setLoadError(e instanceof Error ? e.message : '加载失败，请稍后重试');
     } finally {
       setLoading(false);
     }
@@ -186,24 +190,15 @@ export default function TripScreen() {
     router.push('/track', {
       routeId: current.route_id,
       tripId: current.id,
-      // 仅已有守护时附带；签署免责后不静默开守护
+      // 仅已有守护时附带 session；跟线本身要求已开守护
       withGuard: !!current.guard_active,
     });
   };
 
-  /** 使用轨迹：已开守护或已签免责 → 进入；否则弹出闸门 */
+  /** 示意跟线：仅已开守护可进；否则弹出闸门引导开守护 */
   const requestUseTrack = () => {
     if (!current) return;
-    if (current.track_access?.allowed) {
-      if (current.track_access.via === 'disclaimer' && !current.guard_active) {
-        confirmDialog('轨迹可用', '你已签署免责协议。强烈建议同时开启行中守护。', {
-          confirmText: '先开守护',
-          cancelText: '继续使用轨迹',
-          onConfirm: () => openGuard(),
-          onCancel: () => enterTrack(),
-        });
-        return;
-      }
+    if (current.guard_active && current.track_access?.allowed) {
       enterTrack();
       return;
     }
@@ -220,16 +215,19 @@ export default function TripScreen() {
     });
   };
 
-  const signAndUseTrack = async () => {
+  const ackAndOpenGuard = async () => {
     if (!current || !agreed || signing) return;
     setSigning(true);
     try {
+      // 免责仅作确认记录，不授予无守护跟线权
       await fetchApi(`/api/v1/trips/${current.id}/disclaimer`, { method: 'POST' });
       setGateVisible(false);
-      await loadBoard();
-      enterTrack();
+      router.push('/guard', {
+        routeId: current.route_id,
+        tripId: current.id,
+      });
     } catch (e) {
-      notifyError('签署失败', e instanceof Error ? e.message : '请稍后重试');
+      notifyError('确认失败', e instanceof Error ? e.message : '请稍后重试');
     } finally {
       setSigning(false);
     }
@@ -361,6 +359,22 @@ export default function TripScreen() {
             <ActivityIndicator size="large" color="#2D6A4F" />
             <Text className="text-muted text-sm mt-3">加载行程作战板…</Text>
           </View>
+        ) : loadError ? (
+          <View className="py-20 items-center px-6">
+            <FontAwesome6 name="cloud-bolt" size={28} color="#8B7D6B" />
+            <Text className="text-foreground font-semibold mt-3">行程加载失败</Text>
+            <Text className="text-muted text-sm text-center mt-2" style={{ lineHeight: 20 }}>
+              {loadError}
+            </Text>
+            <TouchableOpacity
+              onPress={() => void loadBoard()}
+              className="mt-5 px-5 py-3 rounded-2xl"
+              style={{ backgroundColor: '#2D6A4F' }}
+              activeOpacity={0.85}
+            >
+              <Text className="text-white font-semibold">重试</Text>
+            </TouchableOpacity>
+          </View>
         ) : (
           <View className="px-5">
             {/* Safety tip */}
@@ -473,19 +487,18 @@ export default function TripScreen() {
                       <View
                         className="px-2.5 py-1 rounded-full"
                         style={{
-                          backgroundColor:
-                            current.status === 'active'
-                              ? 'rgba(82,183,136,0.18)'
-                              : 'rgba(45,106,79,0.1)',
+                          backgroundColor: current.guard_active
+                            ? 'rgba(82,183,136,0.18)'
+                            : 'rgba(45,106,79,0.1)',
                         }}
                       >
                         <Text
                           className="text-xs font-bold"
                           style={{
-                            color: current.status === 'active' ? '#2D6A4F' : '#2D6A4F',
+                            color: current.guard_active ? '#2D6A4F' : '#8B7D6B',
                           }}
                         >
-                          {current.status === 'active' ? '守护中' : '计划中'}
+                          {current.guard_active ? '守护中' : '计划中'}
                         </Text>
                       </View>
                       <Text className="text-xs text-muted">{current.departure_label}</Text>
@@ -593,9 +606,9 @@ export default function TripScreen() {
                         }}
                       >
                         {current.track_access?.message ||
-                          '使用轨迹前请开启守护或签署免责协议'}
+                          '示意跟线需先开启行中守护'}
                         {current.disclaimer_accepted && !current.guard_active
-                          ? '（已签协议）'
+                          ? '（已确认风险说明，仍需开守护）'
                           : ''}
                       </Text>
                     </View>
@@ -656,7 +669,7 @@ export default function TripScreen() {
                   <View className="mb-4">
                     <Text className="text-lg font-bold text-foreground mb-2">必带缺口</Text>
                     <Text className="text-xs text-muted mb-3">
-                      未齐必带前，不建议开启长途守护出行
+                      未齐建议必带前，不建议开启长途守护出行（当前不强制拦截）
                     </Text>
                     {current.progress.gaps.map((gap) => (
                       <TouchableOpacity
@@ -893,7 +906,7 @@ export default function TripScreen() {
         )}
       </ScrollView>
 
-      {/* 轨迹准入闸门：守护 或 免责协议 */}
+      {/* 示意跟线闸门：确认风险后开启守护（免责不能绕过守护） */}
       <Modal
         visible={gateVisible}
         animationType="slide"
@@ -911,37 +924,15 @@ export default function TripScreen() {
             }}
           >
             <View className="flex-row items-center justify-between mb-3">
-              <Text className="text-lg font-bold text-foreground">使用轨迹前确认</Text>
+              <Text className="text-lg font-bold text-foreground">示意跟线前确认</Text>
               <TouchableOpacity onPress={() => setGateVisible(false)} hitSlop={8}>
                 <FontAwesome6 name="xmark" size={18} color="#8B7D6B" />
               </TouchableOpacity>
             </View>
             <Text className="text-xs text-muted mb-3" style={{ lineHeight: 18 }}>
-              须满足其一：① 开启实时守护；② 阅读并签署免责协议。推荐优先开启守护。
+              示意跟线需先开启行中守护。免责说明仅作风险确认，不能替代守护与定位上报。
             </Text>
 
-            <TouchableOpacity onPress={openGuard} activeOpacity={0.85} className="mb-3">
-              <LinearGradient
-                colors={['#2D6A4F', '#52B788']}
-                start={{ x: 0, y: 0 }}
-                end={{ x: 1, y: 0 }}
-                style={{
-                  borderRadius: 16,
-                  paddingVertical: 14,
-                  paddingHorizontal: 16,
-                  flexDirection: 'row',
-                  alignItems: 'center',
-                }}
-              >
-                <FontAwesome6 name="shield-halved" size={16} color="#fff" />
-                <View className="ml-3 flex-1">
-                  <Text className="text-white font-bold">开启实时守护后使用</Text>
-                  <Text className="text-white/80 text-xs mt-0.5">推荐 · 紧急联系人可看位置</Text>
-                </View>
-              </LinearGradient>
-            </TouchableOpacity>
-
-            <Text className="text-sm font-semibold text-foreground mb-2">或签署免责协议</Text>
             <ScrollView style={{ maxHeight: 200 }} className="mb-3">
               <View
                 className="rounded-2xl px-3 py-3"
@@ -949,7 +940,7 @@ export default function TripScreen() {
               >
                 <Text className="text-xs text-muted" style={{ lineHeight: 20 }}>
                   {board?.disclaimer_text ||
-                    '使用轨迹存在风险，未开启守护时紧急联系人无法实时获知位置。'}
+                    '示意跟线非精确导航；后台将暂停上报，危急请拨打 110。'}
                 </Text>
               </View>
             </ScrollView>
@@ -970,24 +961,40 @@ export default function TripScreen() {
                 {agreed ? <FontAwesome6 name="check" size={10} color="#fff" /> : null}
               </View>
               <Text className="text-xs text-foreground flex-1" style={{ lineHeight: 18 }}>
-                我已阅读并同意上述免责条款，自愿在未开启守护的情况下使用轨迹导航。
+                我已阅读上述说明，知悉示意跟线非导航，且需在开守护后使用。
               </Text>
             </TouchableOpacity>
 
             <TouchableOpacity
-              onPress={signAndUseTrack}
+              onPress={() => void ackAndOpenGuard()}
               disabled={!agreed || signing}
               activeOpacity={0.85}
-              className="py-3.5 rounded-2xl items-center mb-1"
-              style={{
-                backgroundColor: agreed && !signing ? '#C44536' : 'rgba(196,69,54,0.35)',
-              }}
+              className="mb-1"
             >
-              {signing ? (
-                <ActivityIndicator color="#fff" />
-              ) : (
-                <Text className="text-white font-bold text-sm">签署并使用轨迹</Text>
-              )}
+              <LinearGradient
+                colors={
+                  agreed && !signing ? ['#2D6A4F', '#52B788'] : ['#A8B5A8', '#A8B5A8']
+                }
+                start={{ x: 0, y: 0 }}
+                end={{ x: 1, y: 0 }}
+                style={{
+                  borderRadius: 16,
+                  paddingVertical: 14,
+                  paddingHorizontal: 16,
+                  flexDirection: 'row',
+                  alignItems: 'center',
+                  justifyContent: 'center',
+                }}
+              >
+                {signing ? (
+                  <ActivityIndicator color="#fff" />
+                ) : (
+                  <>
+                    <FontAwesome6 name="shield-halved" size={16} color="#fff" />
+                    <Text className="text-white font-bold ml-2">确认并开启守护</Text>
+                  </>
+                )}
+              </LinearGradient>
             </TouchableOpacity>
           </View>
         </View>

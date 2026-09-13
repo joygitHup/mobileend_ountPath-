@@ -30,6 +30,8 @@ import { LegalDocModal } from '@/components/LegalDocModal';
 import { useSafeRouter } from '@/hooks/useSafeRouter';
 import { useAuth } from '@/contexts/AuthContext';
 import type { LegalDocKey } from '@/utils/legalDocs';
+import { fetchApi } from '@/utils/api';
+import { notifyInfo } from '@/utils/notify';
 
 const HERO_IMAGE =
   'https://images.unsplash.com/photo-1464822759023-fed622ff2c3b?w=1400&q=80';
@@ -104,6 +106,7 @@ export default function LoginScreen({ gate = false }: LoginScreenProps) {
     }
     setError('');
     setCountdown(60);
+    notifyInfo('演示环境', '无需短信，验证码请直接填写 1234');
   };
 
   const handleLogin = async () => {
@@ -119,19 +122,15 @@ export default function LoginScreen({ gate = false }: LoginScreenProps) {
     setError('');
     setSubmitting(true);
     try {
-      const base = process.env.EXPO_PUBLIC_BACKEND_BASE_URL || '';
-      const res = await fetch(`${base}/api/v1/auth/login`, {
+      const json = await fetchApi<{
+        data: {
+          token: string;
+          user: { id: string; name: string; phone?: string; avatar_url?: string };
+        };
+      }>('/api/v1/auth/login', {
         method: 'POST',
-        headers: { 'Content-Type': 'application/json' },
         body: JSON.stringify({ phone: trimmed, code: code.trim() }),
       });
-      const json = (await res.json().catch(() => null)) as {
-        data?: { token: string; user: { id: string; name: string; phone?: string; avatar_url?: string } };
-        error?: string;
-      } | null;
-      if (!res.ok) {
-        throw new Error(json?.error || `登录失败 (${res.status})`);
-      }
       if (!json?.data?.token) {
         throw new Error('登录响应无效');
       }

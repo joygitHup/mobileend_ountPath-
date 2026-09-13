@@ -24,7 +24,8 @@
 ├── mobileback/                 # 【主后端】Go + Gin + SQLite（:9092）
 ├── mobilemange/                # 【运营管理台】Vite + React + Ant Design（:9093）
 ├── package.json
-├── .cozeproj                   # 预置脚手架脚本（禁止修改；仍可能尝试启动已删除的 Express `server/`）
+├── .cozeproj                   # 预置脚手架（禁止修改；内含已失效的 Express :9091 脚本，勿直接调用）
+├── scripts/                    # 仓库自维护脚本（`pnpm dev` → mobileback :9092 + Expo）
 └── .coze                       # 配置文件（禁止修改）
 
 ## 样式方案
@@ -250,7 +251,7 @@ import { Screen } from '../../../components/Screen';
 
 ## 本地开发
 
-`coze dev`：脚手架仍可能尝试启动已删除的 Express `server/`（`.cozeproj` 禁止修改）。**推荐**本地组合：先 `cd mobileback && make run`（:9092），再起 client / `pnpm --filter expo-app start`。
+本地开发：**`pnpm dev`** → `scripts/dev_run.sh`（mobileback **:9092** + Expo :5000）。Express `server/` 已删除；勿跑 `.cozeproj/scripts/dev_run.sh`（仍指向 :9091）。也可分开：`pnpm dev:api` + `pnpm dev:client`，管理台 `pnpm dev:admin`（:9093）。
 
 ### 可落地后端 mobileback（Go）**【主后端】**
 
@@ -269,7 +270,7 @@ Client 默认指向 mobileback（`client/.env.development` / EAS development）�
 EXPO_PUBLIC_BACKEND_BASE_URL=http://127.0.0.1:9092
 ```
 
-`pnpm dev` 会走脚手架并可能因缺少 `server/` 报错；日常请直接起 mobileback + Expo。
+`pnpm dev` 已改走 `scripts/dev_run.sh`（mobileback :9092）。`.cozeproj` 内旧脚本仍指向 Express :9091，请忽略。
 
 演示登录验证码：`1234`。详见 [mobileback/README.md](mobileback/README.md)。
 
@@ -341,7 +342,7 @@ app/
 - 推荐：`mobileback` `:9092` + `EXPO_PUBLIC_BACKEND_BASE_URL=http://127.0.0.1:9092`
 - 种子：直接编辑 `mobileback/seeds/*.json`，再 `make seed`
 - 冒烟：`cd mobileback && make e2e`
-- 注意：`.cozeproj` 仍可能查找已删除的 Express `server/`；请以 mobileback 为准
+- 注意：以 mobileback :9092 为准；勿使用 `.cozeproj` 里启动 Express :9091 的旧脚本
 
 ### 主题定制
 - Design tokens 入口：`client/global.css`

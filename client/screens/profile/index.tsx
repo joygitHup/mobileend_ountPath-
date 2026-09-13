@@ -179,21 +179,35 @@ export default function ProfileScreen() {
   const { unreadCount, refreshUnread } = useNotifications();
   const { grantedCount, items } = useAppPermissions();
   const [profile, setProfile] = useState<MeProfile | null>(null);
+  const [loading, setLoading] = useState(false);
+  const [loadError, setLoadError] = useState<string | null>(null);
+
+  const loadProfile = useCallback(() => {
+    if (!isAuthenticated) {
+      setProfile(null);
+      setLoadError(null);
+      setLoading(false);
+      return;
+    }
+    setLoading(true);
+    setLoadError(null);
+    fetchApi<{ data: MeProfile }>('/api/v1/me/profile')
+      .then((res) => {
+        setProfile(res.data);
+        updateUser({ name: res.data.name, avatar_url: res.data.avatar_url });
+      })
+      .catch((e) => {
+        setProfile(null);
+        setLoadError(e instanceof Error ? e.message : '加载失败，请稍后重试');
+      })
+      .finally(() => setLoading(false));
+    void refreshUnread();
+  }, [isAuthenticated, updateUser, refreshUnread]);
 
   useFocusEffect(
     useCallback(() => {
-      if (!isAuthenticated) {
-        setProfile(null);
-        return;
-      }
-      fetchApi<{ data: MeProfile }>('/api/v1/me/profile')
-        .then((res) => {
-          setProfile(res.data);
-          updateUser({ name: res.data.name, avatar_url: res.data.avatar_url });
-        })
-        .catch(() => setProfile(null));
-      void refreshUnread();
-    }, [isAuthenticated, updateUser, refreshUnread])
+      loadProfile();
+    }, [loadProfile])
   );
 
   const permHint =
@@ -273,11 +287,33 @@ export default function ProfileScreen() {
     );
   }
 
-  if (!profile) {
+  if (loading && !profile) {
     return (
       <Screen safeAreaEdges={['left', 'right']} backgroundColor={palette.background}>
         <View className="flex-1 items-center justify-center">
           <Text className="text-muted">加载中…</Text>
+        </View>
+      </Screen>
+    );
+  }
+
+  if (loadError || !profile) {
+    return (
+      <Screen safeAreaEdges={['left', 'right']} backgroundColor={palette.background}>
+        <View className="flex-1 items-center justify-center px-8" style={{ paddingTop: insets.top }}>
+          <FontAwesome6 name="cloud-bolt" size={28} color="#8B7D6B" />
+          <Text className="text-foreground font-semibold mt-3">资料加载失败</Text>
+          <Text className="text-muted text-sm text-center mt-2" style={{ lineHeight: 20 }}>
+            {loadError || '暂时无法获取个人资料'}
+          </Text>
+          <TouchableOpacity
+            onPress={loadProfile}
+            className="mt-5 px-5 py-3 rounded-2xl"
+            style={{ backgroundColor: '#2D6A4F' }}
+            activeOpacity={0.85}
+          >
+            <Text className="text-white font-semibold">重试</Text>
+          </TouchableOpacity>
         </View>
       </Screen>
     );

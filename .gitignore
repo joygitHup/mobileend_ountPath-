@@ -91,6 +91,11 @@ logs/
 # Preview files
 .preview
 
+# Soft copyright deposit generated dumps (regenerate via script)
+docs/软著交存/output/*
+!docs/软著交存/output/.gitkeep
+!docs/软著交存/output/README.md
+
 # CodeGraph index
 .codegraph
 node_modules/

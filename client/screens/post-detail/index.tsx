@@ -18,7 +18,8 @@ import { useSafeRouter, useSafeSearchParams } from '@/hooks/useSafeRouter';
 import { useAuth } from '@/contexts/AuthContext';
 import { useSeasonTheme } from '@/contexts/SeasonThemeContext';
 import { fetchApi } from '@/utils/api';
-import { notifyError, notifyInfo, notifySuccess } from '@/utils/notify';
+import { confirmDialog, notifyError, notifyInfo, notifySuccess } from '@/utils/notify';
+import { JoinTripModal } from '@/components/JoinTripModal';
 
 type DisplayType = 'guide' | 'condition' | 'question' | 'review' | 'companion';
 
@@ -268,6 +269,9 @@ export default function PostDetailScreen() {
   const [likingPost, setLikingPost] = useState(false);
   const [joining, setJoining] = useState(false);
   const [markingAnswered, setMarkingAnswered] = useState(false);
+  const [joinTripOpen, setJoinTripOpen] = useState(false);
+  const [joinRouteId, setJoinRouteId] = useState<string | null>(null);
+  const [joinRouteName, setJoinRouteName] = useState<string | null>(null);
 
   const patchCommentLike = (list: CommentNode[], id: string, liked: boolean, likes: number): CommentNode[] =>
     list.map((c) => {
@@ -334,6 +338,8 @@ export default function PostDetailScreen() {
           already?: boolean;
           interest_count: number;
           companion_meta?: PostDetail['companion_meta'];
+          route_id?: string;
+          route_name?: string;
         };
       }>(`/api/v1/community/posts/${id}/join`, {
         method: 'POST',
@@ -349,10 +355,26 @@ export default function PostDetailScreen() {
             }
           : prev
       );
-      notifySuccess(
-        res.data.already ? '已报名' : '已发送加入意向',
-        '楼主会在消息中收到通知'
-      );
+      const routeId = res.data.route_id || post.route_id;
+      const routeName = res.data.route_name || post.route_name || post.title;
+      if (routeId) {
+        setJoinRouteId(routeId);
+        setJoinRouteName(routeName);
+        confirmDialog(
+          res.data.already ? '已报名' : '已发送加入意向',
+          '楼主会收到站内信。座位已更新。是否将该路线加入自己的行程，继续清单与守护？',
+          {
+            confirmText: '加入我的行程',
+            cancelText: '稍后',
+            onConfirm: () => setJoinTripOpen(true),
+          }
+        );
+      } else {
+        notifySuccess(
+          res.data.already ? '已报名' : '已发送加入意向',
+          '楼主会在消息中收到通知；该约伴未关联路线，请自行到发现页选线'
+        );
+      }
     } catch (e) {
       notifyError('报名失败', e instanceof Error ? e.message : '请稍后重试');
     } finally {
@@ -771,6 +793,14 @@ export default function PostDetailScreen() {
           </>
         )}
       </KeyboardAvoidingView>
+      {joinRouteId || post?.route_id ? (
+        <JoinTripModal
+          visible={joinTripOpen}
+          routeId={joinRouteId || post?.route_id || null}
+          routeName={joinRouteName || post?.route_name || post?.title}
+          onClose={() => setJoinTripOpen(false)}
+        />
+      ) : null}
     </Screen>
   );
 }

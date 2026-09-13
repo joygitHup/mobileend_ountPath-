@@ -1,5 +1,6 @@
 import { Alert, Platform } from 'react-native';
 import Toast from 'react-native-toast-message';
+import { enqueueConfirm } from '@/utils/confirmQueue';
 
 /** 轻提示（优先 Toast，避免 Web 上 Alert 无响应） */
 export function notifyInfo(title: string, message?: string) {
@@ -23,18 +24,23 @@ type ConfirmOpts = {
 };
 
 /**
- * 确认框：原生多按钮 Alert 在 Web 常无响应，Web 改用 window.confirm。
+ * 确认框：原生用 Alert；Web 用自定义 Modal（保留「确定/取消」真实文案，支持嵌套队列）。
  */
 export function confirmDialog(title: string, message: string, opts: ConfirmOpts) {
   const confirmText = opts.confirmText ?? '确定';
   const cancelText = opts.cancelText ?? '取消';
 
   if (Platform.OS === 'web') {
-    const ok =
-      typeof window !== 'undefined' &&
-      window.confirm(`${title}\n\n${message}${opts.destructive ? `\n\n（${confirmText}）` : ''}`);
-    if (ok) opts.onConfirm();
-    else opts.onCancel?.();
+    void enqueueConfirm({
+      title,
+      message,
+      confirmText,
+      cancelText,
+      destructive: opts.destructive,
+    }).then((ok) => {
+      if (ok) opts.onConfirm();
+      else opts.onCancel?.();
+    });
     return;
   }
 

@@ -1,13 +1,16 @@
 import AsyncStorage from '@react-native-async-storage/async-storage';
 import { AppState } from 'react-native';
 import dayjs from 'dayjs';
-import { notifyInfo } from '@/utils/notify';
+import { router } from 'expo-router';
+import Toast from 'react-native-toast-message';
+import { confirmDialog } from '@/utils/notify';
 
 const SCHEDULE_KEY = 'mountpath.departure.remind.schedule';
 const FIRED_KEY = 'mountpath.departure.remind.fired';
 
 export type DepartureRemindSchedule = {
   tripId: string;
+  routeId?: string;
   routeName: string;
   departureAt: string;
   hoursBefore: number;
@@ -50,9 +53,21 @@ async function markFired(key: string) {
   await AsyncStorage.setItem(FIRED_KEY, JSON.stringify(arr));
 }
 
+function openDepartureTarget(s: DepartureRemindSchedule) {
+  if (s.remindChecklist && s.routeId) {
+    router.push({
+      pathname: '/checklist',
+      params: { routeId: s.routeId, tripId: s.tripId },
+    });
+    return;
+  }
+  router.push('/(tabs)/trip');
+}
+
 /**
  * 检查是否进入「出发前 N 小时」窗口。
  * 仅应用内 Toast（非系统推送）；杀进程/锁屏无法送达。
+ * 点击 Toast 或确认框可落到清单 / 行程。
  */
 export async function checkDepartureReminds(): Promise<boolean> {
   try {
@@ -75,11 +90,27 @@ export async function checkDepartureReminds(): Promise<boolean> {
     if (s.remindChecklist) parts.push('核对接行前清单');
     if (s.remindRouteRisk) parts.push('留意路线风险提示');
     const tip = parts.length ? parts.join('；') : '请做好出行准备';
+    const title = `出行提醒 · ${s.routeName || '行程'}`;
+    const message = `预计 ${dep.format('MM/DD HH:mm')} 出发。${tip}（仅 App 打开时可见，非系统推送）`;
 
-    notifyInfo(
-      `出行提醒 · ${s.routeName || '行程'}`,
-      `预计 ${dep.format('MM/DD HH:mm')} 出发。${tip}（仅 App 打开时可见，非系统推送）`
-    );
+    Toast.show({
+      type: 'info',
+      text1: title,
+      text2: `${message} · 点此前往`,
+      visibilityTime: 5600,
+      onPress: () => {
+        Toast.hide();
+        openDepartureTarget(s);
+      },
+    });
+
+    // 再给一次明确归途（避免只看到 Toast 不知去哪）
+    confirmDialog(title, `${message}\n\n是否现在去核对清单或行程？`, {
+      confirmText: s.remindChecklist && s.routeId ? '去清单' : '去行程',
+      cancelText: '稍后',
+      onConfirm: () => openDepartureTarget(s),
+    });
+
     await markFired(fireKey);
     return true;
   } catch {

@@ -8,7 +8,7 @@ import React, {
   useState,
   type ReactNode,
 } from 'react';
-import { setAuthInvalidHandler } from '@/utils/api';
+import { fetchApi, setAuthInvalidHandler } from '@/utils/api';
 import {
   AUTH_TOKEN_KEY,
   AUTH_USER_KEY,
@@ -59,6 +59,9 @@ export const AuthProvider: React.FC<{ children: ReactNode }> = ({ children }) =>
 
   useEffect(() => {
     let cancelled = false;
+    const safety = setTimeout(() => {
+      if (!cancelled) setIsLoading(false);
+    }, 8000);
     (async () => {
       try {
         const [t, u] = await Promise.all([
@@ -66,19 +69,49 @@ export const AuthProvider: React.FC<{ children: ReactNode }> = ({ children }) =>
           AsyncStorage.getItem(AUTH_USER_KEY),
         ]);
         if (cancelled) return;
-        if (t && u) {
-          try {
-            setToken(t);
-            setUser(JSON.parse(u) as UserOut);
-          } catch {
-            setToken(null);
-            setUser(null);
-            await clearStoredAuth();
-          }
-        } else if (t || u) {
+
+        if (!(t && u)) {
+          if (t || u) await clearStoredAuth();
           setToken(null);
           setUser(null);
+          return;
+        }
+
+        let cached: UserOut | null = null;
+        try {
+          cached = JSON.parse(u) as UserOut;
+        } catch {
           await clearStoredAuth();
+          setToken(null);
+          setUser(null);
+          return;
+        }
+
+        // 用本地 token 请求 /me；401 由 fetchApi 清会话。网络失败则暂用缓存，避免误踢下线。
+        try {
+          const res = await fetchApi<{
+            data: { id: string; name: string; avatar_url?: string; phone?: string };
+          }>('/api/v1/me/profile');
+          if (cancelled) return;
+          const next: UserOut = {
+            id: res.data.id,
+            name: res.data.name,
+            avatar_url: res.data.avatar_url ?? cached.avatar_url,
+            phone: res.data.phone ?? cached.phone,
+          };
+          setToken(t);
+          setUser(next);
+          await AsyncStorage.setItem(AUTH_USER_KEY, JSON.stringify(next));
+        } catch {
+          if (cancelled) return;
+          const stillHas = await AsyncStorage.getItem(AUTH_TOKEN_KEY);
+          if (!stillHas) {
+            setToken(null);
+            setUser(null);
+            return;
+          }
+          setToken(t);
+          setUser(cached);
         }
       } finally {
         if (!cancelled) setIsLoading(false);
@@ -86,6 +119,7 @@ export const AuthProvider: React.FC<{ children: ReactNode }> = ({ children }) =>
     })();
     return () => {
       cancelled = true;
+      clearTimeout(safety);
     };
   }, []);
 

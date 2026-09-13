@@ -6,6 +6,7 @@ import { GestureHandlerRootView } from 'react-native-gesture-handler';
 import { WebOnlyColorSchemeUpdater } from './ColorSchemeUpdater';
 import { WebOnlyPrettyScrollbar } from './PrettyScrollbar';
 import { MobileShell } from './MobileShell';
+import { ConfirmModalHost } from './ConfirmModalHost';
 import { HeroUINativeProvider } from '@/heroui';
 import {
   initGuardHeartbeat,
@@ -46,6 +47,7 @@ function Provider({ children }: { children: ReactNode }) {
                   <GestureHandlerRootView style={{ flex: 1 }}>
                     <HeroUINativeProvider>{children}</HeroUINativeProvider>
                   </GestureHandlerRootView>
+                  <ConfirmModalHost />
                 </MobileShell>
               </RuntimeServices>
             </NotificationProvider>

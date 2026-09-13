@@ -80,12 +80,13 @@ export const antdTheme = {
 
 export const routeMeta: Record<string, { title: string; desc: string }> = {
   '/': { title: '运营概览', desc: '内容、行程与安全态势一览' },
-  '/routes': { title: '路线管理', desc: '维护 App 发现页与详情目录' },
-  '/tracks': { title: '轨迹管理', desc: '官方轨迹包与社区轨迹审核' },
-  '/checklists': { title: '清单模板', desc: '按难度配置智能准备清单' },
+  '/routes': { title: '路线管理', desc: '五维评分、封面、详情与上下架' },
+  '/tracks': { title: '轨迹管理', desc: '轨迹包表单编辑与社区轨迹预览' },
+  '/checklists': { title: '清单模板', desc: '按难度表单配置准备清单' },
   '/leaders': { title: '认证领队', desc: '社区领队卡片与资质信息' },
   '/tools': { title: '工具箱', desc: '海拔仪、指南针等工具条目' },
-  '/community': { title: '社区审核', desc: '帖子隐藏、删除与付费标记' },
+  '/community': { title: '社区审核', desc: '帖子、评论、答疑与约伴报名' },
+  '/trips': { title: '行程运营', desc: '计划中/进行中行程查询与强制收口' },
   '/users': { title: '用户治理', desc: '实名、等级、角色与封禁' },
   '/safety': { title: '安全运营台', desc: '守护会话与 SOS 处置' },
   '/system': { title: '系统与合规', desc: '法律文案、营地信号与审计' },

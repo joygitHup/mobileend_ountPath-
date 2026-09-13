@@ -137,6 +137,7 @@ func NewRouter(gdb *gorm.DB, cfg config.Config) *gin.Engine {
 			track.GET("/list/:routeId", s.trackList)
 			track.POST("/start", s.authRequired(), s.trackStart)
 			track.POST("/progress", s.authRequired(), s.trackProgress)
+			track.POST("/end", s.authRequired(), s.trackEnd)
 			track.POST("/annotations", s.authRequired(), s.trackAnnotate)
 			track.POST("/publish", s.authRequired(), s.trackPublish)
 			track.POST("/feedback", s.trackFeedback)
@@ -188,6 +189,11 @@ func NewRouter(gdb *gorm.DB, cfg config.Config) *gin.Engine {
 			admin.GET("/guard/sessions", s.adminGuardSessions)
 			admin.PATCH("/guard/sessions/:id", s.adminGuardSessionPatch)
 			admin.GET("/sos", s.adminSosList)
+			admin.POST("/sos/:userId/resolve", s.adminSosResolve)
+
+			admin.GET("/trips", s.adminTripsList)
+			admin.POST("/trips/:id/force-end", s.adminTripForceEnd)
+			admin.GET("/companion-interests", s.adminCompanionInterests)
 
 			admin.GET("/legal-docs", s.adminLegalList)
 			admin.PUT("/legal-docs/:id", s.adminLegalPut)
@@ -424,6 +430,9 @@ func (s *Server) routesDiscover(c *gin.Context) {
 	province := c.Query("province")
 	filtered := make([]map[string]any, 0, len(routes))
 	for _, r := range routes {
+		if !routeIsPublished(r) {
+			continue
+		}
 		if diff != "" && diff != "all" && str(r["difficulty"]) != diff {
 			continue
 		}
@@ -450,6 +459,11 @@ func (s *Server) routesDiscover(c *gin.Context) {
 	c.JSON(200, gin.H{"data": domain.BuildDiscoverFeedWithWeather(filtered, w, profile)})
 }
 
+func routeIsPublished(m map[string]any) bool {
+	st := str(m["status"])
+	return st == "" || st == "published"
+}
+
 func (s *Server) routesList(c *gin.Context) {
 	routes, _ := s.allRouteMaps()
 	diff := c.Query("difficulty")
@@ -459,6 +473,9 @@ func (s *Server) routesList(c *gin.Context) {
 	profile := s.matchProfileFor(s.userIDFromHeader(c))
 	out := make([]map[string]any, 0)
 	for _, r := range routes {
+		if !routeIsPublished(r) {
+			continue
+		}
 		if diff != "" && diff != "all" && r["difficulty"] != diff {
 			continue
 		}
@@ -482,6 +499,9 @@ func (s *Server) routesSearch(c *gin.Context) {
 	profile := s.matchProfileFor(s.userIDFromHeader(c))
 	out := make([]map[string]any, 0)
 	for _, r := range routes {
+		if !routeIsPublished(r) {
+			continue
+		}
 		if q == "" || strings.Contains(strings.ToLower(str(r["name"])), q) ||
 			strings.Contains(strings.ToLower(str(r["location"])), q) {
 			out = append(out, domain.EnrichRouteForUser(r, season, profile))
@@ -506,6 +526,12 @@ func (s *Server) routeDetail(c *gin.Context) {
 		c.JSON(404, gin.H{"error": "路线不存在"})
 		return
 	}
+	var listPayload map[string]any
+	_ = json.Unmarshal([]byte(row.Payload), &listPayload)
+	if !routeIsPublished(listPayload) {
+		c.JSON(404, gin.H{"error": "路线未上架或不存在"})
+		return
+	}
 	var detail map[string]any
 	var extra db.RouteDetailExtra
 	season := domain.CurrentSeason(time.Now())
@@ -514,8 +540,7 @@ func (s *Server) routeDetail(c *gin.Context) {
 		_ = json.Unmarshal([]byte(extra.Payload), &detail)
 		detail = domain.EnrichRouteForUser(detail, season, profile)
 	} else {
-		_ = json.Unmarshal([]byte(row.Payload), &detail)
-		detail = domain.EnrichRouteForUser(detail, season, profile)
+		detail = domain.EnrichRouteForUser(listPayload, season, profile)
 	}
 	var track db.TrackBundle
 	if err := s.DB.First(&track, "route_id = ?", id).Error; err == nil {
@@ -712,12 +737,13 @@ func (s *Server) checklistGet(c *gin.Context) {
 		var rm map[string]any
 		_ = json.Unmarshal([]byte(route.Payload), &rm)
 		c.JSON(200, gin.H{"data": gin.H{
-			"trip_id": trip.ID, "route_id": routeID, "route_name": rm["name"],
-			"departure_time": trip.DepartureAt.Format(time.RFC3339),
-			"weather_summary": "多云，28°C，夏末湿热，注意补水防晒",
-			"items": items,
-			"total_weight_suggestion_grams": 0,
-		}})
+		"trip_id": trip.ID, "route_id": routeID, "route_name": rm["name"],
+		"departure_time": trip.DepartureAt.Format(time.RFC3339),
+		"weather_summary": "多云，28°C，夏末湿热，注意补水防晒",
+		"items": items,
+		"total_weight_suggestion_grams": 0,
+		"read_only": false,
+	}})
 		return
 	}
 	items, name, err := s.checklistItemsForRoute(routeID)
@@ -731,6 +757,8 @@ func (s *Server) checklistGet(c *gin.Context) {
 		"weather_summary": "多云，28°C",
 		"items": items,
 		"total_weight_suggestion_grams": 0,
+		"read_only": true,
+		"need_trip": true,
 	}})
 }
 

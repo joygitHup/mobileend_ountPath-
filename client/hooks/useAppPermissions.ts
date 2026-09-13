@@ -48,7 +48,7 @@ const META: Record<
 > = {
   location: {
     title: '定位',
-    purpose: '用于轨迹导航、实时守护打卡、偏航提醒与 SOS 定位。关闭后守护与导航能力将受限。',
+    purpose: '用于示意跟线、行中守护打卡、偏航提醒与 SOS 定位。关闭后守护与跟线能力将受限。',
     icon: 'location-dot',
   },
   photos: {

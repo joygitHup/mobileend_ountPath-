@@ -365,6 +365,22 @@ func (s *Server) ensureSosGuardSession(uid string, lat, lng float64, ts string) 
 	}
 }
 
+func (s *Server) resolveLatestSos(uid, reason string) {
+	var st db.SafetySettings
+	if err := s.DB.First(&st, "user_id = ?", uid).Error; err != nil || st.LastSosJSON == "" {
+		return
+	}
+	var latest map[string]any
+	if err := json.Unmarshal([]byte(st.LastSosJSON), &latest); err != nil || latest == nil {
+		latest = map[string]any{}
+	}
+	latest["status"] = "resolved"
+	latest["resolved_at"] = time.Now().Format(time.RFC3339)
+	latest["resolve_reason"] = reason
+	st.LastSosJSON = mustJSON(latest)
+	s.DB.Save(&st)
+}
+
 func (s *Server) persistLatestSos(uid string, latest gin.H) {
 	st := s.ensureSafetySettings(uid)
 	st.LastSosJSON = mustJSON(latest)

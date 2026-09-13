@@ -9,8 +9,10 @@ import {
   CheckCircleOutlined,
   QuestionCircleOutlined,
   NodeIndexOutlined,
+  ScheduleOutlined,
 } from '@ant-design/icons';
 import { useQuery } from '@tanstack/react-query';
+import { useNavigate } from 'react-router-dom';
 import { api } from '@/api/client';
 import { brand } from '@/theme/tokens';
 import { StatAccent } from '@/components/PageChrome';
@@ -43,6 +45,7 @@ function MetricCard({
   icon,
   accent = brand.primary,
   alert,
+  onClick,
 }: {
   title: string;
   value: number | string;
@@ -50,9 +53,16 @@ function MetricCard({
   icon?: ReactNode;
   accent?: string;
   alert?: boolean;
+  onClick?: () => void;
 }) {
   return (
-    <Card className={`stat-card ${alert ? 'stat-card--alert' : ''}`} bordered>
+    <Card
+      className={`stat-card ${alert ? 'stat-card--alert' : ''}`}
+      bordered
+      hoverable={!!onClick}
+      onClick={onClick}
+      style={onClick ? { cursor: 'pointer' } : undefined}
+    >
       <StatAccent color={accent} />
       <div style={{ display: 'flex', justifyContent: 'space-between', alignItems: 'flex-start' }}>
         <Statistic
@@ -88,13 +98,16 @@ function MetricCard({
 }
 
 export default function DashboardPage() {
+  const navigate = useNavigate();
   const summary = useQuery({
     queryKey: ['admin-summary'],
     queryFn: () => api<Summary>('/api/v1/admin/dashboard/summary'),
+    refetchInterval: 30_000,
   });
   const insights = useQuery({
     queryKey: ['admin-insights'],
     queryFn: () => api<Insights>('/api/v1/admin/dashboard/insights'),
+    refetchInterval: 30_000,
   });
 
   if (summary.isLoading || insights.isLoading) {
@@ -111,7 +124,7 @@ export default function DashboardPage() {
       <div className="dash-hero">
         <h2 className="dash-hero__title">今日运营态势</h2>
         <p className="dash-hero__sub">
-          目录内容、社区健康与安全守护汇总 · 数据来自 mobileback 实时库
+          点击指标可进入对应处置台 · 数据来自 mobileback 实时库
         </p>
       </div>
 
@@ -124,15 +137,17 @@ export default function DashboardPage() {
             icon={<AlertOutlined />}
             accent={brand.danger}
             alert={s.active_guards > 0}
+            onClick={() => navigate('/safety?tab=guard&status=open')}
           />
         </Col>
         <Col xs={24} sm={12} lg={8}>
           <MetricCard
-            title="SOS 记录"
+            title="SOS 待处置"
             value={s.sos_records}
             icon={<AlertOutlined />}
             accent={brand.danger}
             alert={s.sos_records > 0}
+            onClick={() => navigate('/safety?tab=sos')}
           />
         </Col>
         <Col xs={24} sm={12} lg={8}>
@@ -142,6 +157,7 @@ export default function DashboardPage() {
             icon={<QuestionCircleOutlined />}
             accent={brand.amberDeep}
             alert={i.unanswered_questions > 0}
+            onClick={() => navigate('/community?filter=unanswered')}
           />
         </Col>
       </Row>
@@ -149,10 +165,20 @@ export default function DashboardPage() {
       <div className="dash-section-title">内容与用户</div>
       <Row gutter={[16, 16]} style={{ marginBottom: 8 }}>
         <Col xs={12} md={8} lg={6}>
-          <MetricCard title="路线" value={s.routes} icon={<CompassOutlined />} />
+          <MetricCard
+            title="路线"
+            value={s.routes}
+            icon={<CompassOutlined />}
+            onClick={() => navigate('/routes')}
+          />
         </Col>
         <Col xs={12} md={8} lg={6}>
-          <MetricCard title="用户" value={s.users} icon={<UserOutlined />} />
+          <MetricCard
+            title="用户"
+            value={s.users}
+            icon={<UserOutlined />}
+            onClick={() => navigate('/users')}
+          />
         </Col>
         <Col xs={12} md={8} lg={6}>
           <MetricCard
@@ -160,10 +186,16 @@ export default function DashboardPage() {
             value={s.posts}
             suffix={s.hidden_posts ? `/ 隐 ${s.hidden_posts}` : undefined}
             icon={<CommentOutlined />}
+            onClick={() => navigate('/community')}
           />
         </Col>
         <Col xs={12} md={8} lg={6}>
-          <MetricCard title="领队" value={s.leaders} icon={<TeamOutlined />} />
+          <MetricCard
+            title="领队"
+            value={s.leaders}
+            icon={<TeamOutlined />}
+            onClick={() => navigate('/leaders')}
+          />
         </Col>
         <Col xs={12} md={8} lg={6}>
           <MetricCard
@@ -171,10 +203,26 @@ export default function DashboardPage() {
             value={i.published_tracks}
             suffix={`/ 官方 ${i.official_tracks}`}
             icon={<NodeIndexOutlined />}
+            onClick={() => navigate('/tracks')}
           />
         </Col>
         <Col xs={12} md={8} lg={6}>
-          <MetricCard title="工具" value={s.tools} icon={<CheckCircleOutlined />} />
+          <MetricCard
+            title="工具"
+            value={s.tools}
+            icon={<CheckCircleOutlined />}
+            onClick={() => navigate('/tools')}
+          />
+        </Col>
+        <Col xs={12} md={8} lg={6}>
+          <MetricCard
+            title="进行中行程"
+            value={s.trips_active}
+            icon={<ScheduleOutlined />}
+            accent={brand.primary}
+            alert={s.trips_active > 0}
+            onClick={() => navigate('/trips?status=active')}
+          />
         </Col>
       </Row>
 
@@ -183,15 +231,25 @@ export default function DashboardPage() {
           <Card
             title="行程漏斗"
             className="stat-card"
+            hoverable
+            onClick={() => navigate('/trips')}
             styles={{ header: { borderBottom: `1px solid ${brand.border}` } }}
           >
             <div style={{ display: 'flex', flexDirection: 'column', gap: 14 }}>
               {[
-                { label: '计划中', value: s.trips_planned, color: brand.amberDeep },
-                { label: '进行中', value: s.trips_active, color: brand.primary },
-                { label: '已完成', value: s.trips_completed, color: brand.moss },
+                { label: '计划中', value: s.trips_planned, color: brand.amberDeep, status: 'planned' },
+                { label: '进行中', value: s.trips_active, color: brand.primary, status: 'active' },
+                { label: '已完成(累计表外)', value: s.trips_completed, color: brand.moss, status: '' },
               ].map((row) => (
-                <div key={row.label}>
+                <div
+                  key={row.label}
+                  onClick={(e) => {
+                    e.stopPropagation();
+                    if (row.status) navigate(`/trips?status=${row.status}`);
+                    else navigate('/trips');
+                  }}
+                  style={{ cursor: 'pointer' }}
+                >
                   <div style={{ display: 'flex', justifyContent: 'space-between', marginBottom: 4 }}>
                     <span style={{ color: brand.textMuted, fontSize: 13 }}>{row.label}</span>
                     <span style={{ fontWeight: 600 }}>{row.value}</span>

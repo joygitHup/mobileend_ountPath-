@@ -13,13 +13,13 @@ import (
 	"mountpath/mobileback/internal/notify"
 )
 
-const trackDisclaimer = `本人知悉户外徒步存在迷路、失联、受伤等风险，轨迹与导航功能仅供辅助参考，不能替代专业判断与现场观察。
+const trackDisclaimer = `本人知悉户外徒步存在迷路、失联、受伤等风险。「示意跟线」仅为示意参考，不能替代专业判断、现场观察与正规导航工具。
 
-在未开启「实时守护」的情况下使用轨迹，紧急联系人将无法实时获知我的位置；本人自愿承担由此产生的风险与后果。
+行中位置上报依赖 App 前台运行；切至后台或杀死 App 后将暂停上报，紧急联系人无法持续获知位置。
 
 通视、信号、海拔等工具结果仅为估算，受天气、植被、设备精度影响，野外请以实际环境为准。
 
-如遇紧急情况，我将主动拨打当地救援电话，并尽快联系紧急联系人。`
+如遇紧急情况，我将主动拨打当地救援电话（如 110），并尽快联系紧急联系人。`
 
 func (s *Server) currentTrip(uid string) *db.Trip {
 	var trip db.Trip
@@ -69,8 +69,10 @@ func tripBrief(t *db.Trip) gin.H {
 
 func (s *Server) clearUserTrips(uid string) {
 	s.DB.Where("user_id = ?", uid).Delete(&db.Trip{})
-	s.DB.Model(&db.GuardSession{}).Where("user_id = ? AND status = ?", uid, "active").
+	// 换行程时一并结束 active/sos 守护，避免旧 SOS 悬空
+	s.DB.Model(&db.GuardSession{}).Where("user_id = ? AND status IN ?", uid, []string{"active", "sos"}).
 		Update("status", "completed")
+	s.resolveLatestSos(uid, "trip_replaced")
 }
 
 func (s *Server) buildChecklistItems(routeID string) string {
@@ -228,13 +230,13 @@ func (s *Server) tripsBoard(c *gin.Context) {
 		depLabel = itoa((hours+23)/24) + " 天后出发"
 	}
 
-	next := gin.H{"key": "guard", "label": "开启守护", "hint": "出发当天建议开启"}
+	next := gin.H{"key": "guard", "label": "开启守护", "hint": "示意跟线需先开守护（前台上报）"}
 	if !progress["essential_ready"].(bool) {
-		next = gin.H{"key": "checklist", "label": "补齐必带", "hint": "还有缺口"}
-	} else if trackAccess["allowed"].(bool) {
-		next = gin.H{"key": "track", "label": "使用轨迹", "hint": trackAccess["message"]}
+		next = gin.H{"key": "checklist", "label": "补齐建议必带", "hint": "还有缺口（建议项，不强制拦截）"}
+	} else if guardActive {
+		next = gin.H{"key": "track", "label": "示意跟线", "hint": trackAccess["message"]}
 	} else {
-		next = gin.H{"key": "track_gate", "label": "使用轨迹", "hint": "需先开启守护或签署免责"}
+		next = gin.H{"key": "guard", "label": "开启守护", "hint": "示意跟线需先开守护"}
 	}
 
 	current := gin.H{
@@ -292,13 +294,19 @@ func progressOf(items []map[string]any) gin.H {
 }
 
 func canUseTrack(trip *db.Trip, guardActive bool) gin.H {
-	if guardActive || trip.Status == "active" {
-		return gin.H{"allowed": true, "via": "guard", "message": "已开启实时守护，可安全使用轨迹导航"}
+	_ = trip // 行程仅作归属；示意跟线准入只看是否有活跃守护会话
+	if guardActive {
+		return gin.H{
+			"allowed": true,
+			"via":     "guard",
+			"message": "已开启行中守护，可进入示意跟线（前台上报位置，非精确导航）",
+		}
 	}
-	if trip.DisclaimerAcceptedAt != nil {
-		return gin.H{"allowed": true, "via": "disclaimer", "message": "已签署免责协议"}
+	return gin.H{
+		"allowed": false,
+		"via":     nil,
+		"message": "示意跟线需先开启行中守护；免责确认不能替代守护",
 	}
-	return gin.H{"allowed": false, "via": nil, "message": "使用轨迹前请开启实时守护，或阅读并签署免责协议"}
 }
 
 /** 从路线预计时长推导守护计划小时（天按约 8h 徒步日估算） */
@@ -480,16 +488,20 @@ func (s *Server) tripsComplete(c *gin.Context) {
 	}
 	var body struct {
 		// abandoned=true：仅取消计划，不计入里程
-		Abandoned bool `json:"abandoned"`
+		Abandoned     bool   `json:"abandoned"`
+		WalkSessionID string `json:"walk_session_id"`
 	}
 	_ = c.BindJSON(&body)
 
 	s.DB.Model(&db.GuardSession{}).Where("user_id = ? AND status IN ?", uid, []string{"active", "sos"}).Update("status", "completed")
+	s.resolveLatestSos(uid, "trip_completed")
 	now := time.Now()
 
 	stats := gin.H{}
 	if !body.Abandoned {
-		stats = s.recordOutingComplete(uid, trip.RouteID, &now)
+		stats = s.recordOutingComplete(uid, trip.RouteID, &now, body.WalkSessionID)
+	} else if body.WalkSessionID != "" {
+		s.endWalkSession(uid, body.WalkSessionID, 0)
 	}
 
 	s.DB.Delete(&trip)
@@ -501,8 +513,8 @@ func (s *Server) tripsComplete(c *gin.Context) {
 	}})
 }
 
-/** 完赛累加：总次数 +1，总里程 += 路线距离，总爬升 += 路线爬升 */
-func (s *Server) recordOutingComplete(uid, routeID string, at *time.Time) gin.H {
+/** 完赛累加：优先指定 walk_session；否则取本路线最近一次 active/ended 会话进度 */
+func (s *Server) recordOutingComplete(uid, routeID string, at *time.Time, walkSessionID string) gin.H {
 	when := time.Now()
 	if at != nil {
 		when = *at
@@ -519,11 +531,21 @@ func (s *Server) recordOutingComplete(uid, routeID string, at *time.Time) gin.H 
 		elev = int(asFloat64(payload["elevation_gain"]) + 0.5)
 	}
 
-	// 可选：按本次步行进度折算里程（有 walk_session 时）
 	progress := 1.0
 	var walk db.WalkSession
-	if err := s.DB.Where("user_id = ? AND route_id = ?", uid, routeID).
-		Order("updated_at desc").First(&walk).Error; err == nil && walk.Progress > 0 {
+	foundWalk := false
+	if walkSessionID != "" {
+		if err := s.DB.Where("id = ? AND user_id = ?", walkSessionID, uid).First(&walk).Error; err == nil {
+			foundWalk = true
+		}
+	}
+	if !foundWalk {
+		if err := s.DB.Where("user_id = ? AND route_id = ?", uid, routeID).
+			Order("updated_at desc").First(&walk).Error; err == nil {
+			foundWalk = true
+		}
+	}
+	if foundWalk && walk.Progress > 0 {
 		progress = walk.Progress
 		if progress > 1 {
 			progress = 1
@@ -531,6 +553,7 @@ func (s *Server) recordOutingComplete(uid, routeID string, at *time.Time) gin.H 
 		if progress < 0.05 {
 			progress = 0.05 // 至少记一点，避免误触完赛记 0
 		}
+		s.endWalkSession(uid, walk.ID, progress)
 	}
 	addDist := round1(distKm * progress)
 	addElev := int(float64(elev)*progress + 0.5)
@@ -558,10 +581,14 @@ func (s *Server) recordOutingComplete(uid, routeID string, at *time.Time) gin.H 
 	user.UpdatedAt = when
 	s.DB.Save(&user)
 
+	var walkPtr *db.WalkSession
+	if foundWalk {
+		walkPtr = &walk
+	}
 	s.DB.Create(&db.CompletedRoute{
 		ID: "cr_" + uuid.NewString()[:10], UserID: uid, RouteID: routeID, RouteName: name,
 		DistanceKm: addDist, ElevationGainM: addElev,
-		DurationHours: float64(tripDurationHours(&walk)),
+		DurationHours: float64(tripDurationHours(walkPtr)),
 		CompletedAt: when,
 	})
 
@@ -571,6 +598,22 @@ func (s *Server) recordOutingComplete(uid, routeID string, at *time.Time) gin.H 
 		"total_distance_km": user.TotalDistance, "total_trips": user.TotalTrips,
 		"total_elevation_gain": user.TotalElev, "level": user.Level,
 	}
+}
+
+func (s *Server) endWalkSession(uid, walkSessionID string, progress float64) {
+	if walkSessionID == "" {
+		return
+	}
+	now := time.Now()
+	updates := map[string]any{
+		"status":     "ended",
+		"ended_at":   now,
+		"updated_at": now,
+	}
+	if progress > 0 {
+		updates["progress"] = progress
+	}
+	s.DB.Model(&db.WalkSession{}).Where("id = ? AND user_id = ?", walkSessionID, uid).Updates(updates)
 }
 
 func tripDurationHours(w *db.WalkSession) float64 {
@@ -1364,7 +1407,10 @@ func (s *Server) communityCompanionJoin(c *gin.Context) {
 	}
 	var exist db.CompanionInterest
 	if s.DB.First(&exist, "user_id = ? AND post_id = ?", uid, postID).Error == nil {
-		c.JSON(200, gin.H{"data": gin.H{"joined": true, "already": true, "interest_count": s.companionInterestCount(postID)}})
+		c.JSON(200, gin.H{"data": gin.H{
+			"joined": true, "already": true, "interest_count": s.companionInterestCount(postID),
+			"route_id": str(payload["route_id"]), "route_name": str(payload["route_name"]),
+		}})
 		return
 	}
 	s.DB.Create(&db.CompanionInterest{UserID: uid, PostID: postID, Note: note, CreatedAt: time.Now()})
@@ -1390,6 +1436,9 @@ func (s *Server) communityCompanionJoin(c *gin.Context) {
 	c.JSON(200, gin.H{"data": gin.H{
 		"joined": true, "already": false, "interest_count": s.companionInterestCount(postID),
 		"companion_meta": payload["companion_meta"],
+		"route_id":       str(payload["route_id"]),
+		"route_name":     str(payload["route_name"]),
+		"next_hint":      "可一键将该路线加入自己的行程，再走清单与守护",
 	}})
 }
 
@@ -1937,6 +1986,7 @@ func (s *Server) guardStop(c *gin.Context) {
 	var body struct {
 		CompleteTrip *bool `json:"complete_trip"`
 		Abandoned    bool  `json:"abandoned"`
+		ConfirmSafe  bool  `json:"confirm_safe"` // 无行程 SOS：结束上报并确认安全
 	}
 	_ = c.BindJSON(&body)
 	countStats := true
@@ -1946,19 +1996,38 @@ func (s *Server) guardStop(c *gin.Context) {
 	if body.Abandoned {
 		countStats = false
 	}
+	// 安全中心「确认安全」：默认不完结行程，只收口守护/SOS
+	if body.ConfirmSafe {
+		countStats = false
+	}
 
 	var gs db.GuardSession
 	if err := s.DB.Where("user_id = ? AND status IN ?", uid, []string{"active", "sos"}).First(&gs).Error; err == nil {
+		wasSos := gs.Status == "sos"
 		gs.Status = "completed"
 		s.DB.Save(&gs)
-		// 仅 complete_trip=true 时完结并移除行程；否则只结束守护，保留行程看板
+		// 仅 complete_trip=true 时完结并移除行程；否则只结束守护，行程回到「计划中」
 		if gs.TripID != nil && countStats {
 			var trip db.Trip
 			if s.DB.First(&trip, "id = ?", *gs.TripID).Error == nil {
-				s.recordOutingComplete(uid, trip.RouteID, nil)
+				s.recordOutingComplete(uid, trip.RouteID, nil, "")
 				s.DB.Delete(&trip)
 			}
+		} else if gs.TripID != nil {
+			s.DB.Model(&db.Trip{}).Where("id = ? AND user_id = ?", *gs.TripID, uid).Updates(map[string]any{
+				"status":           "planned",
+				"guard_session_id": nil,
+			})
 		}
+		if wasSos || body.ConfirmSafe {
+			reason := "guard_stopped"
+			if body.ConfirmSafe {
+				reason = "user_confirmed_safe"
+			}
+			s.resolveLatestSos(uid, reason)
+		}
+	} else if body.ConfirmSafe {
+		s.resolveLatestSos(uid, "user_confirmed_safe")
 	}
 	c.JSON(200, gin.H{"data": gin.H{"ok": true, "stats_applied": countStats}})
 }

@@ -6,11 +6,17 @@ import { brand } from '@/theme/tokens';
 import { ApiError } from '@/api/client';
 
 export default function LoginPage() {
-  const { user, login } = useAuth();
+  const { user, login, ready } = useAuth();
   const [form] = Form.useForm();
   const [loading, setLoading] = useState(false);
 
+  if (!ready) return null;
   if (user) return <Navigate to="/" replace />;
+
+  const demoDefaults =
+    import.meta.env.DEV
+      ? { phone: '13800000000', code: '1234' }
+      : { phone: '', code: '' };
 
   return (
     <div className="login-page">
@@ -28,13 +34,19 @@ export default function LoginPage() {
             欢迎回来
           </Typography.Title>
           <Typography.Paragraph type="secondary" style={{ marginBottom: 28 }}>
-            仅 ops / admin 可进入 · 演示验证码 <Typography.Text code>1234</Typography.Text>
+            仅 ops / admin 可进入
+            {import.meta.env.DEV ? (
+              <>
+                {' '}
+                · 演示验证码 <Typography.Text code>1234</Typography.Text>
+              </>
+            ) : null}
           </Typography.Paragraph>
           <Form
             form={form}
             layout="vertical"
             requiredMark={false}
-            initialValues={{ phone: '13800000000', code: '1234' }}
+            initialValues={demoDefaults}
             onFinish={async (values) => {
               setLoading(true);
               try {

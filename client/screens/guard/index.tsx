@@ -316,6 +316,36 @@ export default function GuardScreen() {
     });
   };
 
+  const confirmSafeFromSos = () => {
+    confirmDialog(
+      '确认安全并结束上报',
+      '将结束行中 SOS / 守护定位打卡，行程仍保留为计划中。若仍处危急请先拨打 110。',
+      {
+        confirmText: '确认安全',
+        cancelText: '继续上报',
+        onConfirm: async () => {
+          try {
+            await fetchApi('/api/v1/guard/stop', {
+              method: 'POST',
+              body: JSON.stringify({
+                complete_trip: false,
+                confirm_safe: true,
+              }),
+            });
+            stopGuardHeartbeat();
+            setStatus('idle');
+            setSession(null);
+            setElapsed(0);
+            setOvertime(false);
+            notifySuccess('已确认安全', '紧急上报已结束，可回行程中心继续');
+          } catch {
+            notifyError('收口失败', '请稍后重试，或回行程页结束行程');
+          }
+        },
+      }
+    );
+  };
+
   const formatTime = (seconds: number) => {
     const h = Math.floor(seconds / 3600);
     const m = Math.floor((seconds % 3600) / 60);
@@ -414,8 +444,12 @@ export default function GuardScreen() {
               </View>
             </View>
 
-            <Text className="text-lg font-bold mb-1" style={{ color: overtime ? '#C44536' : '#2D6A4F' }}>
-              {overtime ? '已超时 · 仍在守护' : pausedByBackground ? '守护暂停（后台）' : '守护中'}
+            <Text className="text-lg font-bold mb-1" style={{ color: overtime ? '#C44536' : pausedByBackground ? '#8B6914' : '#2D6A4F' }}>
+              {overtime
+                ? '已超时 · 仍在前台守护'
+                : pausedByBackground
+                  ? '已暂停上报'
+                  : '前台守护中'}
             </Text>
             <Text
               className="text-3xl font-bold text-foreground mb-2"
@@ -586,21 +620,26 @@ export default function GuardScreen() {
               <FontAwesome6 name="triangle-exclamation" size={48} color="#C44536" />
             </View>
             <Text className="text-xl font-bold mb-2" style={{ color: '#C44536' }}>
-              SOS 已发送
+              SOS 已发送 · 上报进行中
             </Text>
             <Text className="text-sm text-muted text-center mb-8 leading-6">
               已向 {guardianLabel} 模拟发送位置（演示通知）。{'\n'}
-              前台将继续定位打卡以便更新位置；危急请拨打 110。
+              前台将继续定位打卡；确认安全后请结束上报，危急请拨打 110。
             </Text>
-            <TouchableOpacity
-              onPress={() => router.back()}
-              activeOpacity={0.85}
-            >
+            <TouchableOpacity onPress={confirmSafeFromSos} activeOpacity={0.85} className="w-full mb-3">
               <View
-                className="rounded-2xl py-4 px-10 items-center"
-                style={{ backgroundColor: '#3D3229' }}
+                className="rounded-2xl py-4 items-center"
+                style={{ backgroundColor: '#2D6A4F' }}
               >
-                <Text className="text-white text-base font-bold">返回</Text>
+                <Text className="text-white text-base font-bold">结束上报 / 确认安全</Text>
+              </View>
+            </TouchableOpacity>
+            <TouchableOpacity onPress={() => router.back()} activeOpacity={0.85} className="w-full">
+              <View
+                className="rounded-2xl py-3 items-center"
+                style={{ backgroundColor: 'rgba(61,50,41,0.08)' }}
+              >
+                <Text className="text-muted text-sm font-medium">稍后处理 · 返回</Text>
               </View>
             </TouchableOpacity>
           </View>

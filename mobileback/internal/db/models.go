@@ -196,8 +196,10 @@ type WalkSession struct {
 	TrackID   string `gorm:"size:64"`
 	Progress  float64
 	OffsetM   float64
+	Status    string `gorm:"index;size:32;default:active"` // active|ended
 	StartedAt time.Time
 	UpdatedAt time.Time
+	EndedAt   *time.Time
 }
 
 // WalkAnnotation 步行会话草稿标注；发布后写入 PublishedTrack

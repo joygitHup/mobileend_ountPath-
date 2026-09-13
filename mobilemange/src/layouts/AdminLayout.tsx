@@ -12,6 +12,7 @@ import {
   AlertOutlined,
   SettingOutlined,
   LogoutOutlined,
+  ScheduleOutlined,
 } from '@ant-design/icons';
 import { Outlet, useLocation, useNavigate } from 'react-router-dom';
 import { useAuth } from '@/auth/AuthContext';
@@ -37,6 +38,7 @@ const menuItems = [
     label: '治理与安全',
     children: [
       { key: '/community', icon: <CommentOutlined />, label: '社区审核' },
+      { key: '/trips', icon: <ScheduleOutlined />, label: '行程运营' },
       { key: '/users', icon: <UserOutlined />, label: '用户治理' },
       { key: '/safety', icon: <AlertOutlined />, label: '安全运营台' },
     ],
@@ -76,6 +78,9 @@ export function AdminLayout() {
 
   const roleColor =
     user?.role === 'admin' ? 'gold' : user?.role === 'ops' ? 'green' : 'default';
+
+  const roleLabel =
+    user?.role === 'admin' ? '管理员' : user?.role === 'ops' ? '运营' : user?.role;
 
   return (
     <Layout className="admin-shell" style={{ minHeight: '100vh' }}>
@@ -138,7 +143,7 @@ export function AdminLayout() {
                 <span className="admin-user__name">{user?.name || '运营账号'}</span>
                 <span className="admin-user__role">
                   <Tag color={roleColor} style={{ marginInlineEnd: 6, lineHeight: '18px' }}>
-                    {user?.role}
+                    {roleLabel}
                   </Tag>
                   {user?.phone}
                 </span>

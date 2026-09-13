@@ -21,8 +21,7 @@ export default ({ config }: ConfigContext): ExpoConfig => {
       supportsTablet: true,
       bundleIdentifier: iosBundleId,
       infoPlist: {
-        NSLocationWhenInUseUsageDescription: "此应用需要获取您的位置以提供实时守护功能。",
-        NSLocationAlwaysAndWhenInUseUsageDescription: "此应用需要获取您的位置以提供实时守护功能。"
+        NSLocationWhenInUseUsageDescription: "山途需要在使用期间获取位置，用于示意跟线、行中守护打卡与 SOS 定位。",
       }
     },
     android: {
@@ -64,10 +63,10 @@ export default ({ config }: ConfigContext): ExpoConfig => {
       [
         "expo-location",
         {
-          locationWhenInUsePermission: "山途需要访问位置，用于轨迹导航、实时守护打卡、偏航提醒与 SOS 定位。",
-          locationAlwaysAndWhenInUsePermission: "山途需要访问位置，用于轨迹导航、实时守护打卡、偏航提醒与 SOS 定位。",
-          isIosBackgroundLocationEnabled: true,
-          isAndroidBackgroundLocationEnabled: true
+          locationWhenInUsePermission: "山途需要访问位置，用于示意跟线、行中守护打卡、偏航提醒与 SOS 定位。",
+          locationAlwaysAndWhenInUsePermission: "山途需要访问位置，用于示意跟线、行中守护打卡、偏航提醒与 SOS 定位。",
+          isIosBackgroundLocationEnabled: false,
+          isAndroidBackgroundLocationEnabled: false
         }
       ],
       [

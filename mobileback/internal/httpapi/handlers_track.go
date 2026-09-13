@@ -245,9 +245,9 @@ func (s *Server) trackStart(c *gin.Context) {
 	access := canUseTrack(cur, guardActive)
 	if allowed, _ := access["allowed"].(bool); !allowed {
 		c.JSON(403, gin.H{
-			"error": "需先开启行中守护或签署免责协议",
-			"code":  "need_track_access",
-			"track_access": access,
+			"error":         "示意跟线需先开启行中守护",
+			"code":          "need_track_access",
+			"track_access":  access,
 		})
 		return
 	}
@@ -302,7 +302,7 @@ func (s *Server) trackStart(c *gin.Context) {
 	walkSessionID := "walk_" + uuid.NewString()[:10]
 	s.DB.Create(&db.WalkSession{
 		ID: walkSessionID, UserID: uid, RouteID: routeID, TrackID: selectedID,
-		Progress: 0, OffsetM: 0, StartedAt: time.Now(), UpdatedAt: time.Now(),
+		Progress: 0, OffsetM: 0, Status: "active", StartedAt: time.Now(), UpdatedAt: time.Now(),
 	})
 
 	walk, err := s.buildWalk(routeID, 0, 0, selectedID, walkSessionID)
@@ -378,6 +378,21 @@ func (s *Server) trackProgress(c *gin.Context) {
 	// 不再用示意进度合成坐标写回守护会话，避免覆盖真机 GPS 打卡
 
 	c.JSON(200, gin.H{"data": walk})
+}
+
+func (s *Server) trackEnd(c *gin.Context) {
+	uid := s.uid(c)
+	var body struct {
+		WalkSessionID string  `json:"walk_session_id"`
+		Progress      float64 `json:"progress"`
+		RouteID       string  `json:"route_id"`
+	}
+	if err := c.BindJSON(&body); err != nil || body.WalkSessionID == "" {
+		c.JSON(400, gin.H{"error": "缺少 walk_session_id"})
+		return
+	}
+	s.endWalkSession(uid, body.WalkSessionID, body.Progress)
+	c.JSON(200, gin.H{"data": gin.H{"ok": true, "walk_session_id": body.WalkSessionID, "status": "ended"}})
 }
 
 func (s *Server) trackAnnotate(c *gin.Context) {

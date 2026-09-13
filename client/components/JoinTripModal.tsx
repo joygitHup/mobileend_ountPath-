@@ -16,6 +16,7 @@ import dayjs, { type Dayjs } from 'dayjs';
 import Toast from 'react-native-toast-message';
 import { fetchApi } from '@/utils/api';
 import { useSafeRouter } from '@/hooks/useSafeRouter';
+import { stopGuardHeartbeat } from '@/utils/guardHeartbeat';
 import {
   PHONE_FRAME_BREAKPOINT,
   PHONE_WIDTH,
@@ -165,6 +166,8 @@ export function JoinTripModal({
       });
       setJoined(res.data);
       setStep('done');
+      // 换行程后端会结束旧 active/sos；客户端心跳也要停，避免旧会话悬空上报
+      stopGuardHeartbeat();
       onJoined?.(res.data);
       Toast.show({
         type: 'success',

@@ -19,7 +19,7 @@
       {
         "id": "trk_official_r1",
         "title": "徽杭古道 · 官方标准路线",
-        "summary": "山途审核发布的标准轨迹，含风险标注与关键补给节点，适合作为默认导航依据。",
+        "summary": "山途审核发布的标准轨迹，含风险标注与关键补给节点，供示意跟线参考，不能替代精确导航。",
         "is_official": true,
         "recommended": true,
         "author": "山途官方",
@@ -169,7 +169,7 @@
       {
         "id": "trk_official_r2",
         "title": "武功山穿越 · 官方标准路线",
-        "summary": "山途审核发布的标准轨迹，含风险标注与关键补给节点，适合作为默认导航依据。",
+        "summary": "山途审核发布的标准轨迹，含风险标注与关键补给节点，供示意跟线参考，不能替代精确导航。",
         "is_official": true,
         "recommended": true,
         "author": "山途官方",
@@ -206,7 +206,7 @@
       {
         "id": "trk_official_r3",
         "title": "虎跳峡高路 · 官方标准路线",
-        "summary": "山途审核发布的标准轨迹，含风险标注与关键补给节点，适合作为默认导航依据。",
+        "summary": "山途审核发布的标准轨迹，含风险标注与关键补给节点，供示意跟线参考，不能替代精确导航。",
         "is_official": true,
         "recommended": true,
         "author": "山途官方",
@@ -243,7 +243,7 @@
       {
         "id": "trk_official_r4",
         "title": "南京紫金山绿道 · 官方标准路线",
-        "summary": "山途审核发布的标准轨迹，含风险标注与关键补给节点，适合作为默认导航依据。",
+        "summary": "山途审核发布的标准轨迹，含风险标注与关键补给节点，供示意跟线参考，不能替代精确导航。",
         "is_official": true,
         "recommended": true,
         "author": "山途官方",
@@ -280,7 +280,7 @@
       {
         "id": "trk_official_r5",
         "title": "船底顶穿越 · 官方标准路线",
-        "summary": "山途审核发布的标准轨迹，含风险标注与关键补给节点，适合作为默认导航依据。",
+        "summary": "山途审核发布的标准轨迹，含风险标注与关键补给节点，供示意跟线参考，不能替代精确导航。",
         "is_official": true,
         "recommended": true,
         "author": "山途官方",
@@ -317,7 +317,7 @@
       {
         "id": "trk_official_r6",
         "title": "雨崩徒步 · 官方标准路线",
-        "summary": "山途审核发布的标准轨迹，含风险标注与关键补给节点，适合作为默认导航依据。",
+        "summary": "山途审核发布的标准轨迹，含风险标注与关键补给节点，供示意跟线参考，不能替代精确导航。",
         "is_official": true,
         "recommended": true,
         "author": "山途官方",

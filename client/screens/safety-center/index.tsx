@@ -17,7 +17,7 @@ import { Screen } from '@/components/Screen';
 import { useSafeRouter } from '@/hooks/useSafeRouter';
 import { fetchApi } from '@/utils/api';
 import { confirmDialog, notifyError, notifySuccess } from '@/utils/notify';
-import { startGuardHeartbeat } from '@/utils/guardHeartbeat';
+import { startGuardHeartbeat, stopGuardHeartbeat } from '@/utils/guardHeartbeat';
 import {
   checkDepartureReminds,
   syncDepartureRemind,
@@ -66,6 +66,7 @@ export default function SafetyCenterScreen() {
   const [saving, setSaving] = useState(false);
   const [sosSending, setSosSending] = useState(false);
   const [sosDone, setSosDone] = useState(false);
+  const [sosEnding, setSosEnding] = useState(false);
   const [deviceId, setDeviceId] = useState('');
 
   const load = useCallback(async () => {
@@ -118,6 +119,7 @@ export default function SafetyCenterScreen() {
       if (next.trip?.departure_at) {
         await syncDepartureRemind({
           tripId: next.trip.id,
+          routeId: next.trip.route_id,
           routeName: next.trip.route_name || '',
           departureAt: next.trip.departure_at,
           hoursBefore: next.settings.departure_remind_hours,
@@ -139,7 +141,6 @@ export default function SafetyCenterScreen() {
   useFocusEffect(
     useCallback(() => {
       load();
-      setSosDone(false);
     }, [load])
   );
 
@@ -187,6 +188,7 @@ export default function SafetyCenterScreen() {
       if (prev.trip?.departure_at) {
         void syncDepartureRemind({
           tripId: prev.trip.id,
+          routeId: prev.trip.route_id,
           routeName: prev.trip.route_name || '',
           departureAt: prev.trip.departure_at,
           hoursBefore: settings.departure_remind_hours,
@@ -204,9 +206,26 @@ export default function SafetyCenterScreen() {
       notifyError('无法求救', '请先添加至少一位紧急联系人');
       return;
     }
+    // 行中：引导到守护页 SOS（统一入口）；无行程才用安全中心紧急记录
+    if (data.trip?.id) {
+      confirmDialog(
+        '行中请走守护页 SOS',
+        '检测到当前有行程。行中求救请在「行中守护」页发起，以便持续前台定位上报。危急请同时拨打 110。',
+        {
+          confirmText: '去守护页',
+          cancelText: '取消',
+          onConfirm: () =>
+            router.push('/guard', {
+              routeId: data.trip?.route_id || '',
+              tripId: data.trip?.id,
+            }),
+        }
+      );
+      return;
+    }
     confirmDialog(
-      'SOS 紧急求救',
-      '确认记录求救？将向紧急联系人发起通知流程（当前为演示：写入服务器日志，不会真实发送短信/推送）。仍请同时拨打 110。',
+      '无行程紧急求救',
+      '当前无进行中行程。将记录一次紧急求救（演示：仅写日志，不真发短信/推送），并尽量开启前台上报。危急请同时拨打 110。',
       {
         confirmText: '确认求救',
         destructive: true,
@@ -236,7 +255,7 @@ export default function SafetyCenterScreen() {
                 lat: pos.lat,
                 lng: pos.lng,
                 timestamp: pos.timestamp,
-                message: '安全中心一键求救',
+                message: '安全中心一键求救（无行程）',
                 channel: 'all',
               }),
             });
@@ -252,7 +271,7 @@ export default function SafetyCenterScreen() {
             notifySuccess(
               '已记录求救',
               gs?.id
-                ? '演示通知已记；前台将持续定位打卡更新位置。危急请拨打 110'
+                ? '演示通知已记；前台将持续定位打卡。危急请拨打 110'
                 : '演示模式下仅模拟通知；真机请立即联系紧急联系人或拨打 110'
             );
             await load();
@@ -260,6 +279,34 @@ export default function SafetyCenterScreen() {
             notifyError('发送失败', e instanceof Error ? e.message : '请稍后重试或拨打 110');
           } finally {
             setSosSending(false);
+          }
+        },
+      }
+    );
+  };
+
+  const endSosReporting = () => {
+    confirmDialog(
+      '确认安全并结束上报',
+      '将停止前台定位打卡，并把本次无行程 SOS 标记为已收口。若仍处危急请先拨打 110。',
+      {
+        confirmText: '确认安全',
+        cancelText: '继续上报',
+        onConfirm: async () => {
+          setSosEnding(true);
+          try {
+            await fetchApi('/api/v1/guard/stop', {
+              method: 'POST',
+              body: JSON.stringify({ complete_trip: false, confirm_safe: true }),
+            });
+            stopGuardHeartbeat();
+            setSosDone(false);
+            notifySuccess('已确认安全', '紧急上报已结束');
+            await load();
+          } catch (e) {
+            notifyError('收口失败', e instanceof Error ? e.message : '请稍后重试');
+          } finally {
+            setSosEnding(false);
           }
         },
       }
@@ -315,6 +362,14 @@ export default function SafetyCenterScreen() {
   const alertColor = (level: string) =>
     level === 'danger' ? '#C44536' : level === 'warn' ? '#B8860B' : '#2D6A4F';
 
+  const sosOpen =
+    sosDone ||
+    (!!data.latest_sos &&
+      data.latest_sos.status !== 'resolved' &&
+      data.latest_sos.status !== 'closed');
+  const sosNoTrip = sosOpen && !data.trip;
+  const sosWithTrip = sosOpen && !!data.trip;
+
   return (
     <Screen safeAreaEdges={['left', 'right']} backgroundColor="#FDF8F0">
       <ScrollView
@@ -339,22 +394,22 @@ export default function SafetyCenterScreen() {
           </View>
 
           {/* SOS */}
-          <TouchableOpacity onPress={triggerSos} disabled={sosSending} activeOpacity={0.85}>
+          <TouchableOpacity
+            onPress={sosOpen ? undefined : triggerSos}
+            disabled={sosSending || sosOpen}
+            activeOpacity={sosOpen ? 1 : 0.85}
+          >
             <LinearGradient
-              colors={
-                sosDone || data.latest_sos
-                  ? ['#52B788', '#2D6A4F']
-                  : ['#C44536', '#A33B2F']
-              }
+              colors={sosOpen ? ['#52B788', '#2D6A4F'] : ['#C44536', '#A33B2F']}
               start={{ x: 0, y: 0 }}
               end={{ x: 1, y: 1 }}
               style={{
                 borderTopLeftRadius: 28,
                 borderTopRightRadius: 10,
-                borderBottomLeftRadius: 10,
-                borderBottomRightRadius: 28,
+                borderBottomLeftRadius: sosOpen ? 0 : 10,
+                borderBottomRightRadius: sosOpen ? 0 : 28,
                 padding: 20,
-                marginBottom: 16,
+                marginBottom: sosOpen ? 0 : 16,
               }}
             >
               <View className="flex-row items-center gap-3">
@@ -370,20 +425,72 @@ export default function SafetyCenterScreen() {
                 </View>
                 <View className="flex-1">
                   <Text className="text-white text-lg font-bold">
-                    {sosDone || data.latest_sos
-                      ? '已记录求救（演示通知）'
-                      : 'SOS 一键求救'}
+                    {sosOpen ? '紧急上报进行中' : 'SOS 一键求救'}
                   </Text>
                   <Text className="text-white/85 text-xs mt-1" style={{ lineHeight: 18 }}>
-                    {sosDone || data.latest_sos
+                    {sosOpen
                       ? data.latest_sos?.message ||
-                        `已记录并向 ${data.latest_sos?.contacts_notified?.length ?? 0} 位联系人模拟通知（非真短信/推送）`
+                        `已记录并向 ${data.latest_sos?.contacts_notified?.length ?? 0} 位联系人模拟通知（非真短信/推送）。`
                       : '二次确认后记录位置并模拟通知联系人；危急请直接拨打 110'}
                   </Text>
                 </View>
               </View>
             </LinearGradient>
           </TouchableOpacity>
+          {sosNoTrip ? (
+            <View
+              className="mb-4 px-3 pb-3 pt-2"
+              style={{
+                backgroundColor: 'rgba(45,106,79,0.08)',
+                borderBottomLeftRadius: 10,
+                borderBottomRightRadius: 28,
+              }}
+            >
+              <Text className="text-xs text-muted mb-2 px-1" style={{ lineHeight: 17 }}>
+                无行程 SOS 收口：结束上报并确认安全后，才会停止定位打卡。
+              </Text>
+              <TouchableOpacity
+                onPress={endSosReporting}
+                disabled={sosEnding}
+                activeOpacity={0.85}
+                className="py-3 rounded-2xl items-center"
+                style={{ backgroundColor: '#2D6A4F' }}
+              >
+                {sosEnding ? (
+                  <ActivityIndicator color="#fff" />
+                ) : (
+                  <Text className="text-white font-bold">结束上报 / 确认安全</Text>
+                )}
+              </TouchableOpacity>
+            </View>
+          ) : null}
+          {sosWithTrip ? (
+            <View
+              className="mb-4 px-3 pb-3 pt-2"
+              style={{
+                backgroundColor: 'rgba(45,106,79,0.08)',
+                borderBottomLeftRadius: 10,
+                borderBottomRightRadius: 28,
+              }}
+            >
+              <Text className="text-xs text-muted mb-2 px-1" style={{ lineHeight: 17 }}>
+                行中 SOS 请在守护页结束上报，以便与行程状态一致。
+              </Text>
+              <TouchableOpacity
+                onPress={() =>
+                  router.push('/guard', {
+                    routeId: data.trip?.route_id || '',
+                    tripId: data.trip?.id,
+                  })
+                }
+                activeOpacity={0.85}
+                className="py-3 rounded-2xl items-center"
+                style={{ backgroundColor: '#2D6A4F' }}
+              >
+                <Text className="text-white font-bold">去守护页收口</Text>
+              </TouchableOpacity>
+            </View>
+          ) : null}
 
           {/* Alerts */}
           {data.alerts.map((a) => (

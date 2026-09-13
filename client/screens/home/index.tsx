@@ -133,7 +133,7 @@ function RouteCard({
           style={{ backgroundColor: match.bg }}
         >
           <Text className="text-xs font-bold" style={{ color: match.color }}>
-            匹配 {route.match_score}%
+            匹配示意 {route.match_score}%
           </Text>
         </View>
         <View
@@ -530,17 +530,17 @@ export default function HomeScreen() {
             <>
               {feed.match_personalized ? (
                 <Text className="text-[11px] text-muted mb-3">
-                  匹配度已按你的等级、里程、收藏与完赛履历计算
+                  契合度由等级、里程、收藏与完赛履历的规则估算，仅供参考，非出行许可
                 </Text>
               ) : (
                 <Text className="text-[11px] text-muted mb-3">
-                  完善体能等级与收藏后，匹配度会更准
+                  完善体能等级与收藏后，规则契合度会更贴近你；仍非权威决策
                 </Text>
               )}
 
               <SectionHeader
                 title="今日适宜"
-                subtitle="结合天气与季节，优先短途、低风险、匹配较高的路线"
+                subtitle="天气与季节规则下的示意推荐，优先短途、低风险；非出行许可"
                 count={feed.today.length}
               />
               {feed.today.length === 0 ? (
@@ -558,7 +558,7 @@ export default function HomeScreen() {
               <View className="mt-2" />
               <SectionHeader
                 title="为你匹配"
-                subtitle="按匹配度排序，并说明为什么推荐（或为什么要谨慎）"
+                subtitle="按规则契合度排序并说明原因；仅供参考，请结合自身判断"
                 count={feed.matched.length}
               />
               {feed.matched.length === 0 ? (
